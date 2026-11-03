@@ -7,6 +7,9 @@ authors:
   - family-names: "Ravichandra"
     given-names: "Pooja"
 license: "Apache-2.0"
+doi: "10.5281/zenodo.23906178"
+repository-code: "https://github.com/Poojarav/compliance-relay"
+url: "https://poojarav.github.io/compliance-relay/"
 keywords:
   - "EU Cyber Resilience Act"
   - "regulatory compliance"
