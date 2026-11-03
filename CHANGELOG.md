@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+- Re-release to register the archived, citable version on Zenodo. No changes to the framework or math.
+
 ## 0.4.0 (first public release)
 
 - Web calculator, spreadsheet and one-page worksheet using the same constraints and math

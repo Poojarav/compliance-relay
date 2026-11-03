@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use the Compliance Relay, please cite it as below."
 title: "The Compliance Relay: a framework for estimating how much of a regulatory deadline reaches engineering teams"
-version: "0.4.0"
+version: "0.4.1"
 date-released: "2026-11-02"
 authors:
   - family-names: "Ravichandra"
