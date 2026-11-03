@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compliance Relay Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: control desk on the left (work, relay, dependencies, capacity, calendar), verdict and to-scale timeline on the right; stacks on phones. */
+:root{
+  --paper:#f3f6f5; --panel:#ffffff; --ink:#13201c; --muted:#56665f; --line:#d3ddd9;
+  --relay:#c25a12; --wait:#d99a2b; --dep:#a8478a; --eng:#12776a; --freeze:#7d8797; --ship:#4f6fb3; --evid:#7a5bb5; --cap:#9b8a2e;
+  --good:#12776a; --warn:#b7791f; --crit:#b4362c;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0e1513; --panel:#141e1b; --ink:#e4ece9; --muted:#97a8a1; --line:#28352f;
+  --relay:#e8853f; --wait:#efbf5c; --dep:#e07cc4; --eng:#3db3a2; --freeze:#6b7686; --ship:#7f9be0; --evid:#a58ce6; --cap:#d2c162;
+  --good:#3db3a2; --warn:#e2b04f; --crit:#ef6b5f; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#0e1513; --panel:#141e1b; --ink:#e4ece9; --muted:#97a8a1; --line:#28352f;
+  --relay:#e8853f; --wait:#efbf5c; --dep:#e07cc4; --eng:#3db3a2; --freeze:#6b7686; --ship:#7f9be0; --evid:#a58ce6; --cap:#d2c162;
+  --good:#3db3a2; --warn:#e2b04f; --crit:#ef6b5f; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 40px}
+.wrap{max-width:1200px;margin:0 auto;display:grid;gap:28px}
+header{display:grid;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-stretch:80%;font-weight:800;font-size:clamp(30px,4.4vw,48px);line-height:1.02;margin:0;text-wrap:balance}
+.lede{max-width:70ch;color:var(--muted);margin:0}
+.grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:920px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:18px;min-width:0}
+h2{font-family:var(--display);font-stretch:85%;font-weight:700;font-size:20px;margin:0}
+h3{font-size:12px;font-family:var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0;font-weight:500;display:flex;align-items:center;gap:8px}
+h3 i{display:inline-block;width:10px;height:10px;border-radius:2px}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:10px;min-width:0}
+legend{padding:0;margin-bottom:8px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:10px;align-items:center}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:13.5px}
+.hint{font-size:12.5px;color:var(--muted);margin:0}
+input[type=number],input[type=date],input[type=text],select{width:100%;font:inherit;font-size:14px;color:var(--ink);background:var(--paper);
+  border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0}
+input[type=number]{font-family:var(--mono);text-align:right}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--eng);outline-offset:2px}
+.check{display:flex;gap:9px;align-items:flex-start;font-size:13.5px}
+.check input{margin-top:3px;accent-color:var(--eng)}
+.list{display:grid;gap:8px}
+.item{display:grid;gap:6px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+.item .top{display:grid;grid-template-columns:minmax(0,1fr) 78px 30px;gap:8px;align-items:center}
+.item .top input[type=text]{background:var(--panel)}
+.item .top input[type=number]{background:var(--panel)}
+.item .dates{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.item .dates input{background:var(--panel)}
+.item .check{font-size:12.5px;color:var(--muted)}
+.unit{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;margin-top:-4px}
+.x{width:30px;height:30px;padding:0;border-radius:6px;font-size:16px;line-height:1;color:var(--muted)}
+.add{justify-self:start;font-size:13px;padding:6px 10px;background:transparent;border-style:dashed}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-size:13.5px;font-weight:600;border-radius:6px;padding:8px 12px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+button.primary{background:var(--eng);border-color:var(--eng);color:var(--panel)}
+.verdict{display:grid;gap:14px}
+.big{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.big .num{font-family:var(--display);font-stretch:75%;font-weight:800;font-size:clamp(56px,9vw,96px);line-height:.9;color:var(--eng);font-variant-numeric:tabular-nums}
+.big .of{font-family:var(--display);font-stretch:85%;font-weight:600;font-size:22px;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid currentColor}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.fact{border-top:2px solid var(--line);padding-top:8px;display:grid;gap:2px;align-content:start}
+.fact b{font-family:var(--mono);font-weight:500;font-size:15px;font-variant-numeric:tabular-nums}
+.fact span{font-size:12.5px;color:var(--muted)}
+.tl{display:grid;gap:8px;min-width:0}
+.barwrap{position:relative;height:46px;border-radius:6px;overflow:hidden;background:var(--line)}
+.seg{position:absolute;top:0;bottom:0}
+.freeze{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,var(--freeze) 0 3px,transparent 3px 7px);opacity:.9}
+.axis{position:relative;height:18px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.axis span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.axis span.first{transform:none}.axis span.last{transform:translateX(-100%)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-family:var(--mono);font-weight:500;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding:6px 8px 6px 0}
+td{border-bottom:1px solid var(--line);padding:9px 8px 9px 0;vertical-align:top}
+td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.minibar{height:6px;border-radius:3px;margin-top:6px}
+.fixes{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.fixes li{display:grid;grid-template-columns:4px minmax(0,1fr);gap:12px}
+.fixes li::before{content:"";border-radius:2px;background:var(--c,var(--line))}
+.fixes b{display:block}
+.fixes p{margin:2px 0 0;color:var(--muted);font-size:14px}
+footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
+.toast{font-size:12.5px;color:var(--good);min-height:1em}
+@media (prefers-reduced-motion:no-preference){.seg,.freeze{transition:left .25s ease,width .25s ease}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">The Compliance Relay · Version 0.4</div>
+    <h1>How much CRA time do your engineers really have?</h1>
+    <p class="lede">A regulation's deadline is not your engineers' deadline. Requirements pass through handoffs, wait on other teams, compete for people's time, and run into freezes, releases and audits. Add the constraints your organization actually has to see the real engineering window before the EU Cyber Resilience Act applies in full, whether the work fits, and when it must start.</p>
+  </header>
+
+  <div class="grid">
+    <form class="panel" id="f" aria-label="Your organization's constraints">
+      <div class="btns"><button type="button" id="reset">Reset to sample numbers</button></div>
+      <p class="hint">The page opens with sample numbers so you can see how it works. They are not data from any organization. Replace them with your own, and add or remove anything that doesn't fit.</p>
+
+      <fieldset>
+        <legend><h3>The clock</h3></legend>
+        <div class="row2">
+          <div><label for="today">Clock starts</label><input type="date" id="today"></div>
+          <div><label for="deadline">Deadline</label><input type="date" id="deadline"></div>
+        </div>
+        <p class="hint">11 Dec 2027 is when the CRA's essential requirements apply in full. Any other regulatory deadline works the same way.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend><h3><i style="background:var(--eng)"></i>The work</h3></legend>
+        <div class="row"><label for="work">Engineering work the obligation needs (weeks of full team time)</label><input type="number" id="work" min="0" max="260"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend><h3><i style="background:var(--relay)"></i>Handoffs before engineers see it</h3></legend>
+        <div class="list" id="relayList"></div>
+        <button type="button" class="add" data-add="relay">Add a handoff</button>
+        <div><label for="guidance">Waiting on standards or guidance until (optional)</label><input type="date" id="guidance"></div>
+        <p class="hint">Mark a step "runs alongside the step above" when the teams work in parallel. The EU asked for draft vulnerability-handling standards by 30 Aug 2026; formal citation usually takes months after that.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend><h3><i style="background:var(--dep)"></i>Dependencies on other teams</h3></legend>
+        <div class="list" id="depList"></div>
+        <button type="button" class="add" data-add="dep">Add a dependency</button>
+        <p class="hint">Weeks after the requirement reaches engineers before this team can start, because it is waiting on someone else.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend><h3><i style="background:var(--cap)"></i>Capacity</h3></legend>
+        <div class="row"><label for="capBase">Share of the team's time available for this work (%)</label><input type="number" id="capBase" min="5" max="100"></div>
+        <div class="list" id="capList"></div>
+        <button type="button" class="add" data-add="cap">Add a capacity reduction</button>
+        <p class="hint">For example job cuts, other regulatory work or a competing launch, as a percentage of the team's time.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend><h3><i style="background:var(--wait)"></i>Planning</h3></legend>
+        <div class="row2">
+          <div><label for="cadence">Planning cycle</label>
+            <select id="cadence"><option value="3">Quarterly</option><option value="6">Every 6 months</option><option value="12">Annual</option></select></div>
+          <div><label for="cycleStart">Cycle starts in</label><select id="cycleStart"></select></div>
+        </div>
+        <label class="check"><input type="checkbox" id="midcycle"> <span>Compliance work can enter mid-cycle without waiting for the next plan</span></label>
+      </fieldset>
+
+      <fieldset>
+        <legend><h3><i style="background:var(--freeze)"></i>Blocked periods</h3></legend>
+        <div class="list" id="blockList"></div>
+        <button type="button" class="add" data-add="block">Add a blocked period</button>
+        <p class="hint">Code freezes, release crunches, audit seasons, reorganizations: any time engineers cannot work on this.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend><h3><i style="background:var(--ship)"></i>Release and evidence</h3></legend>
+        <div class="row"><label for="cc">Code complete before the release that must comply (weeks)</label><input type="number" id="cc" min="0" max="52"></div>
+        <div class="row"><label for="ev">Validation, evidence and audit readiness (weeks)</label><input type="number" id="ev" min="0" max="52"></div>
+      </fieldset>
+    </form>
+
+    <div style="display:grid;gap:24px;min-width:0">
+      <section class="panel verdict" aria-live="polite">
+        <h3>Engineering time left</h3>
+        <div class="big"><span class="num" id="engW">0</span><span class="of" id="ofW">weeks of 0 on the calendar</span></div>
+        <div><span class="chip" id="chip">—</span></div>
+        <div class="facts">
+          <div class="fact"><b id="fKick">—</b><span>Latest date the first handoff must begin</span></div>
+          <div class="fact"><b id="fArrive">—</b><span>Requirement reaches engineers</span></div>
+          <div class="fact"><b id="fStart">—</b><span>Engineering can start</span></div>
+          <div class="fact"><b id="fFinish">—</b><span>Real engineering deadline</span></div>
+          <div class="fact"><b id="fCap">—</b><span>Capacity available for this work</span></div>
+        </div>
+        <div class="tl">
+          <div class="barwrap" id="bar" role="img" aria-label="Timeline from clock start to deadline"></div>
+          <div class="axis" id="axis"></div>
+          <div class="legend">
+            <span><i style="background:var(--relay)"></i>Handoffs</span>
+            <span><i style="background:var(--wait)"></i>Waiting (standards or planning)</span>
+            <span><i style="background:var(--dep)"></i>Waiting on other teams</span>
+            <span><i style="background:var(--eng)"></i>Engineering</span>
+            <span><i style="background:repeating-linear-gradient(135deg,var(--freeze) 0 3px,transparent 3px 7px)"></i>Blocked</span>
+            <span><i style="background:var(--ship)"></i>Code complete to release</span>
+            <span><i style="background:var(--evid)"></i>Evidence and audit</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Where the time goes</h2>
+        <div style="overflow-x:auto"><table><thead><tr><th>Loss</th><th style="text-align:right">Weeks</th><th style="text-align:right">Share of calendar</th></tr></thead><tbody id="losses"></tbody></table></div>
+        <p class="hint">Reduced capacity is shown as the engineering weeks it costs inside the working window; it does not appear on the timeline.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Win time back: start with the biggest loss</h2>
+        <ul class="fixes" id="fixes"></ul>
+        <div class="btns"><button type="button" class="primary" id="copy">Copy results as text</button></div>
+        <div class="toast" id="toast" role="status"></div>
+      </section>
+    </div>
+  </div>
+
+  <footer>
+    <div><strong>How it works.</strong> The requirement reaches engineers after the handoffs (steps marked as parallel take as long as the longest of them), or after the standards date if that is later. Work starts at the next planning cycle unless mid-cycle entry is allowed, and no earlier than the longest dependency allows. The real deadline is the regulatory deadline minus code-complete lead time and evidence preparation, moved earlier if it falls inside a blocked period. Blocked days inside the working window are subtracted, and the remaining weeks are multiplied by the share of time available. To find when work must start, the calculator counts back from the real deadline by the work needed at that capacity, skipping blocked days, then subtracts the dependency wait and the handoffs.</div>
+    <div>Created by Pooja Ravichandra. A generic planning model: every value is the user's own input. Not legal advice. Code: Apache-2.0. Documentation: CC BY 4.0.</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const FULLM=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const $=id=>document.getElementById(id);
+  FULLM.forEach((m,i)=>{const o=document.createElement("option");o.value=i+1;o.textContent=m;$("cycleStart").appendChild(o);});
+  const iso=dn=>new Date(dn*864e5).toISOString().slice(0,10);
+  const toDay=s=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(s||""))return null;const[y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1,d)/864e5;};
+  const parts=dn=>{const d=new Date(dn*864e5);return{y:d.getUTCFullYear(),m:d.getUTCMonth(),d:d.getUTCDate()};};
+  const fmt=dn=>{const p=parts(dn);return `${MONTHS[p.m]} ${p.d}, ${p.y}`;};
+  const wk=days=>Math.max(0,days)/7;
+  const r1=x=>(Math.round(x*10)/10).toLocaleString(undefined,{maximumFractionDigits:1});
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  function todayISO(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;}
+  function sample(){
+    const y=new Date().getFullYear();
+    return {today:todayISO(),deadline:"2027-12-11",work:20,capBase:80,guidance:"",cadence:"3",cycleStart:"1",midcycle:false,cc:4,ev:6,
+      relay:[{label:"Legal interpretation",weeks:4,par:false},{label:"Compliance policy",weeks:4,par:false},{label:"Security program design",weeks:3,par:false},{label:"Finding the right partner teams",weeks:2,par:false},{label:"Product team intake",weeks:2,par:false}],
+      deps:[{label:"Waiting on the build platform team",weeks:3}],
+      caps:[{label:"Competing regulatory work",pct:10}],
+      blocks:[{label:"Year-end code freeze",from:`${y}-12-15`,to:`${y+1}-01-05`,repeat:true},{label:"Major release crunch",from:"2027-05-01",to:"2027-05-21",repeat:false}]};
+  }
+  let S=sample();
+  const NEW={relay:{label:"New handoff",weeks:2,par:false},dep:{label:"Waiting on another team",weeks:2},cap:{label:"Capacity reduction",pct:10},block:{label:"Blocked period",from:"",to:"",repeat:false}};
+  const KEY={relay:"relay",dep:"deps",cap:"caps",block:"blocks"};
+  function renderLists(){
+    const rl=$("relayList");rl.innerHTML="";
+    S.relay.forEach((r,i)=>{const d=document.createElement("div");d.className="item";
+      d.innerHTML=`<div class="top"><input type="text" id="relay-${i}-label" aria-label="Handoff name" value="${esc(r.label)}"><input type="number" id="relay-${i}-weeks" aria-label="Weeks" min="0" max="104" value="${r.weeks}"><button type="button" class="x" data-del="relay" data-i="${i}" aria-label="Remove ${esc(r.label)}">×</button></div><div class="unit">weeks</div>${i>0?`<label class="check"><input type="checkbox" id="relay-${i}-par" ${r.par?"checked":""}> <span>Runs alongside the step above</span></label>`:""}`;rl.appendChild(d);});
+    const dl=$("depList");dl.innerHTML="";
+    S.deps.forEach((r,i)=>{const d=document.createElement("div");d.className="item";
+      d.innerHTML=`<div class="top"><input type="text" id="dep-${i}-label" aria-label="Dependency" value="${esc(r.label)}"><input type="number" id="dep-${i}-weeks" aria-label="Weeks of delay" min="0" max="104" value="${r.weeks}"><button type="button" class="x" data-del="dep" data-i="${i}" aria-label="Remove ${esc(r.label)}">×</button></div><div class="unit">weeks of delay</div>`;dl.appendChild(d);});
+    const cl=$("capList");cl.innerHTML="";
+    S.caps.forEach((r,i)=>{const d=document.createElement("div");d.className="item";
+      d.innerHTML=`<div class="top"><input type="text" id="cap-${i}-label" aria-label="Capacity reduction" value="${esc(r.label)}"><input type="number" id="cap-${i}-pct" aria-label="Percent of team time" min="0" max="95" value="${r.pct}"><button type="button" class="x" data-del="cap" data-i="${i}" aria-label="Remove ${esc(r.label)}">×</button></div><div class="unit">% of team time</div>`;cl.appendChild(d);});
+    const bl=$("blockList");bl.innerHTML="";
+    S.blocks.forEach((r,i)=>{const d=document.createElement("div");d.className="item";
+      d.innerHTML=`<div class="top" style="grid-template-columns:minmax(0,1fr) 30px"><input type="text" id="block-${i}-label" aria-label="Blocked period name" value="${esc(r.label)}"><button type="button" class="x" data-del="block" data-i="${i}" aria-label="Remove ${esc(r.label)}">×</button></div><div class="dates"><input type="date" id="block-${i}-from" aria-label="From" value="${r.from}"><input type="date" id="block-${i}-to" aria-label="To" value="${r.to}"></div><label class="check"><input type="checkbox" id="block-${i}-repeat" ${r.repeat?"checked":""}> <span>Repeats every year</span></label>`;bl.appendChild(d);});
+  }
+  function writeSimple(){
+    ["today","deadline","work","capBase","guidance","cadence","cycleStart","cc","ev"].forEach(k=>{$(k).value=S[k];});
+    $("midcycle").checked=!!S.midcycle;
+  }
+  function read(){
+    ["today","deadline","guidance","cadence","cycleStart"].forEach(k=>S[k]=$(k).value);
+    ["work","capBase","cc","ev"].forEach(k=>S[k]=+$(k).value||0);
+    S.midcycle=$("midcycle").checked;
+    S.relay=S.relay.map((r,i)=>({label:$(`relay-${i}-label`).value,weeks:+$(`relay-${i}-weeks`).value||0,par:i>0&&!!($(`relay-${i}-par`)||{}).checked}));
+    S.deps=S.deps.map((r,i)=>({label:$(`dep-${i}-label`).value,weeks:+$(`dep-${i}-weeks`).value||0}));
+    S.caps=S.caps.map((r,i)=>({label:$(`cap-${i}-label`).value,pct:+$(`cap-${i}-pct`).value||0}));
+    S.blocks=S.blocks.map((r,i)=>({label:$(`block-${i}-label`).value,from:$(`block-${i}-from`).value,to:$(`block-${i}-to`).value,repeat:$(`block-${i}-repeat`).checked}));
+  }
+  function blockRanges(t0,dl){
+    const out=[];
+    S.blocks.forEach(b=>{const a=toDay(b.from),e=toDay(b.to);if(a===null||e===null)return;const len=e<a?null:e-a;if(len===null)return;
+      if(!b.repeat){out.push({label:b.label,a,b:e+1});return;}
+      const pa=parts(a);for(let y=parts(t0).y-1;y<=parts(dl).y+1;y++){const s=Date.UTC(y,pa.m,pa.d)/864e5;out.push({label:b.label,a:s,b:s+len+1});}});
+    return out;
+  }
+  const overlap=(a,b,list)=>list.reduce((t,r)=>t+Math.max(0,Math.min(b,r.b)-Math.max(a,r.a)),0);
+  function unionDays(a,b,list){let n=0;for(let d=Math.floor(a);d<b;d++){if(list.some(r=>d>=r.a&&d<r.b))n++;}return n;}
+  function cycleNext(dn,cad,sm){const y=parts(dn).y;let best=null;for(let yy=y-1;yy<=y+3;yy++)for(let k=0;k<12/cad;k++){const mi=(sm-1+k*cad)%12,yr=yy+Math.floor((sm-1+k*cad)/12),c=Date.UTC(yr,mi,1)/864e5;if(c>=dn&&(best===null||c<best))best=c;}return best;}
+  function cyclePrev(dn,cad,sm){const y=parts(dn).y;let best=null;for(let yy=y-3;yy<=y+1;yy++)for(let k=0;k<12/cad;k++){const mi=(sm-1+k*cad)%12,yr=yy+Math.floor((sm-1+k*cad)/12),c=Date.UTC(yr,mi,1)/864e5;if(c<=dn&&(best===null||c>best))best=c;}return best;}
+  function relayWeeks(){let total=0,group=0;S.relay.forEach((r,i)=>{const w=Math.max(0,r.weeks);if(i>0&&r.par){group=Math.max(group,w);}else{total+=group;group=w;}});return total+group;}
+  let last=null;
+  function compute(){
+    const t0=toDay(S.today),dl=toDay(S.deadline);
+    if(t0===null||dl===null||dl<=t0){$("engW").textContent="—";$("ofW").textContent="Set a deadline after the clock start";return;}
+    const relayW=relayWeeks(),relayEnd=t0+relayW*7;
+    const g=toDay(S.guidance),arrive=g!==null&&g>relayEnd?g:relayEnd;
+    const cad=+S.cadence,sm=+S.cycleStart;
+    const planStart=S.midcycle?arrive:cycleNext(arrive,cad,sm);
+    const depW=S.deps.reduce((m,d)=>Math.max(m,Math.max(0,d.weeks)),0);
+    const depReady=arrive+depW*7;
+    const start=Math.max(planStart,depReady);
+    const cap=Math.min(100,Math.max(5,S.capBase-S.caps.reduce((t,c)=>t+Math.max(0,c.pct),0)))/100;
+    const blocks=blockRanges(t0,dl);
+    const cc=Math.max(0,S.cc),ev=Math.max(0,S.ev);
+    let finish=dl-(cc+ev)*7;
+    let moved=true,guard=0;while(moved&&guard<20){moved=false;guard++;for(const r of blocks){if(finish>r.a&&finish<=r.b){finish=r.a;moved=true;}}}
+    const total=dl-t0;
+    const blockedInWindow=finish>start?unionDays(start,finish,blocks):0;
+    const workingDays=finish>start?(finish-start)-blockedInWindow:0;
+    const engDays=workingDays*cap;
+    const clamp=x=>Math.min(Math.max(x,t0),dl);
+    const segs=[];let cur=t0;
+    const push=(end,color,label)=>{const e=clamp(Math.max(cur,end));if(e>cur)segs.push({a:cur,b:e,color,label});cur=e;};
+    const planWaitEnd=Math.max(arrive,Math.min(planStart,start));
+    push(relayEnd,"var(--relay)","Handoffs");
+    push(arrive,"var(--wait)","Waiting on standards");
+    if(planStart>=depReady){push(planStart,"var(--wait)","Waiting for planning cycle");}
+    else{push(planWaitEnd,"var(--wait)","Waiting for planning cycle");push(start,"var(--dep)","Waiting on other teams");}
+    push(Math.max(start,finish),"var(--eng)","Engineering");
+    push(Math.max(cur,dl-ev*7),"var(--ship)","Code complete to release");
+    push(dl,"var(--evid)","Evidence and audit");
+    const relayLoss=clamp(relayEnd)-t0, stdLoss=clamp(arrive)-clamp(relayEnd);
+    const planLoss=Math.max(0,clamp(Math.min(planStart,start))-clamp(arrive));
+    const depLoss=Math.max(0,clamp(start)-clamp(Math.max(planStart,arrive)));
+    const tailLoss=dl-Math.max(clamp(start),clamp(finish));
+    const shipLoss=Math.min(cc*7,tailLoss),evLoss=Math.max(0,tailLoss-shipLoss);
+    const capLoss=workingDays*(1-cap);
+    const losses=[
+      {k:"relay",label:"Handoffs before engineers see the requirement",d:relayLoss,c:"var(--relay)"},
+      {k:"std",label:"Waiting on standards or guidance",d:stdLoss,c:"var(--wait)"},
+      {k:"plan",label:"Waiting for the next planning cycle",d:planLoss,c:"var(--wait)"},
+      {k:"dep",label:"Waiting on other teams",d:depLoss,c:"var(--dep)"}
+    ];
+    if(finish>start){const seen={};blocks.forEach(r=>{const o=overlap(start,finish,[r]);if(o>0){seen[r.label]=(seen[r.label]||0)+o;}});
+      const sum=Object.values(seen).reduce((a,b)=>a+b,0)||1;
+      Object.entries(seen).forEach(([label,o])=>losses.push({k:"block",label:`Blocked: ${label}`,d:blockedInWindow*(o/sum),c:"var(--freeze)"}));}
+    losses.push({k:"cap",label:"Reduced capacity inside the working window",d:capLoss,c:"var(--cap)"});
+    losses.push({k:"ship",label:"Code complete ahead of the release",d:shipLoss,c:"var(--ship)"});
+    losses.push({k:"ev",label:"Validation, evidence and audit preparation",d:evLoss,c:"var(--evid)"});
+    const shown=losses.filter(x=>x.d>0.5);
+    const need=Math.max(0,S.work)*7, needCal=need/cap;
+    let c2=finish,acc=0,gg=0;const inBlock=d=>blocks.some(r=>d>=r.a&&d<r.b);
+    while(acc<needCal&&gg<6000){c2-=1;gg++;if(!inBlock(c2))acc++;}
+    const latestStart=c2;
+    let arriveBy=latestStart-depW*7;
+    if(!S.midcycle){const p=cyclePrev(latestStart,cad,sm);if(p!==null)arriveBy=Math.min(arriveBy,p);}
+    const kickoff=arriveBy-relayW*7;
+    render({t0,dl,total,arrive,start,finish,engDays,blocks,segs,losses:shown,need,kickoff,cap});
+  }
+  const FIX={
+    relay:["Interpret in parallel, not in sequence","Bring legal, compliance, security and an engineering lead into one working group from day one, and name the partner teams up front. Each handoff you remove gives back its full duration."],
+    std:["Build what is certain while standards settle","Start on requirements that will not change, such as inventory, SBOM generation and vulnerability intake, and design the rest to absorb the final standard."],
+    plan:["Reserve capacity for regulatory work in every plan","Hold a standing slice of each planning cycle for compliance, so a new obligation never waits months for the next plan."],
+    dep:["Surface dependencies on day one","Map which teams you depend on as soon as the requirement lands, agree dates with them in writing, and escalate any dependency that has no committed date."],
+    block:["Plan around the blocked periods you already know","Put compliance milestones on the calendar before each freeze, release crunch or audit season, and treat the start of the last one before the deadline as your real deadline."],
+    cap:["Protect the team's time for this work","Make the compliance work an explicit priority with dedicated people, rather than a share of everyone's spare time, and stop or defer lower-value work to fund it."],
+    ship:["Ship compliance on an earlier release train","Decouple compliance capabilities from feature releases, or land them a release earlier, so code-complete lead time does not eat the window."],
+    ev:["Generate evidence as you build","Produce SBOMs, validation results and audit records automatically in the pipeline, instead of assembling evidence at the end."]
+  };
+  function render(r){
+    last=r;
+    const engW=wk(r.engDays),totW=wk(r.total),pct=r.total?r.engDays/r.total:0;
+    $("engW").textContent=r1(engW);
+    $("ofW").textContent=`weeks of work possible, of ${r1(totW)} weeks on the calendar`;
+    const chip=$("chip"),spare=engW-r.need/7;
+    if(engW<=0){chip.textContent="No engineering time left";chip.style.color="var(--crit)";}
+    else if(r.need<=0){chip.textContent="Enter the work needed to check the fit";chip.style.color="var(--muted)";}
+    else if(spare<0){chip.textContent=`Short by ${r1(-spare)} weeks of work`;chip.style.color="var(--crit)";}
+    else{chip.textContent=`Fits, with ${r1(spare)} weeks of work to spare`;chip.style.color=spare<4?"var(--warn)":"var(--good)";}
+    $("fKick").textContent=r.need<=0?"—":(r.kickoff<r.t0?`Already late by ${r1(wk(r.t0-r.kickoff))} weeks`:fmt(r.kickoff));
+    $("fArrive").textContent=r.arrive>=r.dl?"After the deadline":fmt(r.arrive);
+    $("fStart").textContent=r.start>=r.dl?"After the deadline":fmt(r.start);
+    $("fFinish").textContent=fmt(Math.max(r.t0,r.finish));
+    $("fCap").textContent=`${Math.round(r.cap*100)}%`;
+    const pos=d=>((d-r.t0)/r.total*100);
+    const bar=$("bar");bar.innerHTML="";
+    r.segs.forEach(s=>{const el=document.createElement("div");el.className="seg";el.style.left=pos(s.a)+"%";el.style.width=(pos(s.b)-pos(s.a))+"%";el.style.background=s.color;el.title=`${s.label}: ${fmt(s.a)} to ${fmt(s.b)}`;bar.appendChild(el);});
+    r.blocks.forEach(b=>{const A=Math.max(b.a,r.t0),B=Math.min(b.b,r.dl);if(B>A){const el=document.createElement("div");el.className="freeze";el.style.left=pos(A)+"%";el.style.width=(pos(B)-pos(A))+"%";el.title=`${b.label}: ${fmt(b.a)} to ${fmt(b.b-1)}`;bar.appendChild(el);}});
+    bar.setAttribute("aria-label",`Timeline from ${fmt(r.t0)} to ${fmt(r.dl)}. ${r1(engW)} weeks of engineering work possible.`);
+    const ax=$("axis");ax.innerHTML="";let ticks=[];
+    for(let y=parts(r.t0).y;y<=parts(r.dl).y+1;y++)for(const m of[0,3,6,9]){const d=Date.UTC(y,m,1)/864e5;if(d>r.t0&&d<r.dl)ticks.push(d);}
+    const step=Math.ceil(ticks.length/6)||1;ticks=ticks.filter((_,i)=>i%step===0);
+    const add=(d,cls,txt)=>{const s=document.createElement("span");if(cls)s.className=cls;s.style.left=pos(d)+"%";s.textContent=txt;ax.appendChild(s);};
+    const short=d=>{const q=parts(d);return `${MONTHS[q.m]} ${q.y}`;};
+    add(r.t0,"first",short(r.t0));
+    ticks.forEach(d=>{const p=pos(d);if(p>12&&p<88){const q=parts(d);add(d,"",`${MONTHS[q.m]} ${String(q.y).slice(2)}`);}});
+    add(r.dl,"last",short(r.dl));
+    const tb=$("losses");tb.innerHTML="";
+    const sorted=[...r.losses].sort((a,b)=>b.d-a.d);
+    sorted.forEach(l=>{const tr=document.createElement("tr"),share=l.d/r.total;
+      tr.innerHTML=`<td>${esc(l.label)}<div class="minibar" style="width:${Math.max(2,share*100)}%;background:${l.c}"></div></td><td class="n">${r1(wk(l.d))}</td><td class="n">${Math.round(share*100)}%</td>`;tb.appendChild(tr);});
+    const er=document.createElement("tr");er.innerHTML=`<td><b>Engineering work possible</b><div class="minibar" style="width:${Math.max(2,pct*100)}%;background:var(--eng)"></div></td><td class="n"><b>${r1(engW)}</b></td><td class="n"><b>${Math.round(pct*100)}%</b></td>`;tb.appendChild(er);
+    const fx=$("fixes");fx.innerHTML="";const used=new Set();
+    sorted.forEach(l=>{if(used.has(l.k)||used.size>=3)return;used.add(l.k);const[t,p]=FIX[l.k];const li=document.createElement("li");li.style.setProperty("--c",l.c);li.innerHTML=`<div><b>${t}</b><p>${p}</p></div>`;fx.appendChild(li);});
+    if(!sorted.length)fx.innerHTML="<li><div><b>No losses to recover</b><p>Your inputs leave the full calendar for engineering.</p></div></li>";
+  }
+  function summary(){
+    if(!last)return"";const r=last;
+    const lines=["Compliance Relay results",`Clock: ${fmt(r.t0)} to ${fmt(r.dl)} (${r1(wk(r.total))} weeks)`,`Requirement reaches engineers: ${fmt(Math.min(r.arrive,r.dl))}`,`Engineering can start: ${fmt(Math.min(r.start,r.dl))}`,`Real engineering deadline: ${fmt(Math.max(r.t0,r.finish))}`,`Capacity available: ${Math.round(r.cap*100)}%`,`Engineering work possible: ${r1(wk(r.engDays))} weeks`,`Engineering work needed: ${r1(r.need/7)} weeks`,`Latest date the first handoff must begin: ${r.kickoff<r.t0?`already late by ${r1(wk(r.t0-r.kickoff))} weeks`:fmt(r.kickoff)}`,"","Where the time goes:"];
+    [...r.losses].sort((a,b)=>b.d-a.d).forEach(l=>lines.push(`- ${l.label}: ${r1(wk(l.d))} weeks`));
+    lines.push("","The Compliance Relay v0.4. Generic planning model. Not legal advice.");
+    return lines.join("\n");
+  }
+  $("copy").addEventListener("click",()=>{const txt=summary(),toast=$("toast");
+    const done=()=>{toast.textContent="Copied results to your clipboard.";setTimeout(()=>toast.textContent="",2500);};
+    const fallback=()=>{const ta=document.createElement("textarea");ta.value=txt;ta.style.width="100%";ta.rows=8;toast.textContent="Select the text below and copy it.";toast.after(ta);ta.select();};
+    try{navigator.clipboard.writeText(txt).then(done,fallback);}catch(e){fallback();}
+  });
+  $("f").addEventListener("click",e=>{
+    const del=e.target.closest("[data-del]");const add=e.target.closest("[data-add]");
+    if(del){read();S[KEY[del.dataset.del]].splice(+del.dataset.i,1);renderLists();compute();}
+    if(add){read();S[KEY[add.dataset.add]].push({...NEW[add.dataset.add]});renderLists();compute();const list=S[KEY[add.dataset.add]];const id=`${add.dataset.add}-${list.length-1}-label`;const el=$(id);if(el){el.focus();el.select();}}
+  });
+  $("reset").addEventListener("click",()=>{S=sample();writeSimple();renderLists();compute();});
+  $("f").addEventListener("input",()=>{read();compute();});
+  $("f").addEventListener("change",()=>{read();compute();});
+  $("f").addEventListener("submit",e=>e.preventDefault());
+  writeSimple();renderLists();compute();
+})();
+</script>
+
+</body>
+</html>

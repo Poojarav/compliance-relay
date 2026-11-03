@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Compliance Relay Worksheet</title>
+<style>
+@page{size:Letter;margin:0.45in 0.5in}
+*{box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;font-size:9.6pt;color:#13201c;margin:0;line-height:1.3}
+h1{font-size:17pt;margin:0;letter-spacing:-.2px}
+.sub{color:#4a5a54;margin:2px 0 8px;font-size:9pt}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+.sec{border:1px solid #9fb2ab;border-radius:4px;padding:6px 8px 7px}
+.sec h2{font-size:9pt;text-transform:uppercase;letter-spacing:.06em;color:#12776a;margin:0 0 5px}
+.line{display:grid;grid-template-columns:1fr 68px;gap:6px;align-items:end;margin:4px 0}
+.box{border-bottom:1px solid #13201c;height:15px}
+.unit{font-size:7.5pt;color:#4a5a54}
+table{width:100%;border-collapse:collapse;font-size:8.6pt}
+th{text-align:left;font-size:7.5pt;text-transform:uppercase;letter-spacing:.04em;color:#4a5a54;font-weight:normal;padding:0 4px 2px 0}
+td{border-bottom:1px solid #13201c;height:17px;padding:0}
+td.c{width:16%}
+td.chk{width:16%;text-align:center;border-bottom:1px solid #13201c}
+.chkbox{display:inline-block;width:9px;height:9px;border:1px solid #13201c;vertical-align:middle}
+.math{grid-column:1/3}
+.steps{display:grid;grid-template-columns:repeat(2,1fr);gap:2px 18px}
+.step{display:grid;grid-template-columns:18px 1fr 74px;gap:6px;align-items:end;margin:3px 0}
+.step b{color:#12776a}
+.verdict{margin-top:6px;display:flex;gap:18px;align-items:center;font-weight:bold}
+.fix{grid-column:1/3}
+.fixes{display:grid;grid-template-columns:1fr 1fr;gap:3px 18px;font-size:8.6pt}
+.fixes div{display:grid;grid-template-columns:14px 1fr;gap:4px}
+.note{font-size:7.6pt;color:#4a5a54;margin-top:6px}
+</style></head><body>
+<h1>Compliance Relay Worksheet</h1>
+<div class="sub">How much of a regulatory deadline actually reaches your engineers? Fill in the boxes in weeks unless noted. Use your own numbers.</div>
+<div class="grid">
+  <div class="sec"><h2>A. The clock and the work</h2>
+    <div class="line"><span>Clock starts <span class="unit">(date)</span></span><span class="box"></span></div>
+    <div class="line"><span>Deadline <span class="unit">(date, e.g. CRA full application 11 Dec 2027)</span></span><span class="box"></span></div>
+    <div class="line"><span>Calendar weeks between them</span><span class="box"></span></div>
+    <div class="line"><span>Engineering work needed <span class="unit">(weeks of full team time)</span></span><span class="box"></span></div>
+  </div>
+  <div class="sec"><h2>B. Handoffs before engineers see it</h2>
+    <table><tr><th>Handoff</th><th>Weeks</th><th>Parallel with above?</th></tr>
+      <tr><td></td><td class="c"></td><td class="chk"><span class="chkbox"></span></td></tr>
+      <tr><td></td><td class="c"></td><td class="chk"><span class="chkbox"></span></td></tr>
+      <tr><td></td><td class="c"></td><td class="chk"><span class="chkbox"></span></td></tr>
+      <tr><td></td><td class="c"></td><td class="chk"><span class="chkbox"></span></td></tr>
+      <tr><td></td><td class="c"></td><td class="chk"><span class="chkbox"></span></td></tr></table>
+    <div class="line"><span>Total handoff weeks <span class="unit">(parallel steps count once, as the longest)</span></span><span class="box"></span></div>
+  </div>
+  <div class="sec"><h2>C. Waiting before work can start</h2>
+    <div class="line"><span>Extra wait for standards or guidance <span class="unit">(beyond the handoffs)</span></span><span class="box"></span></div>
+    <div class="line"><span>Wait for the next planning cycle <span class="unit">(0 if work can enter mid-cycle)</span></span><span class="box"></span></div>
+    <div class="line"><span>Longest wait on another team</span><span class="box"></span></div>
+    <div class="line"><span><b>Waiting before start</b> <span class="unit">(standards wait + the larger of the two waits above)</span></span><span class="box"></span></div>
+  </div>
+  <div class="sec"><h2>D. Capacity</h2>
+    <div class="line"><span>Share of team time available <span class="unit">(%)</span></span><span class="box"></span></div>
+    <table><tr><th>Reduction (job cuts, competing work, launches)</th><th>%</th></tr>
+      <tr><td></td><td class="c"></td></tr><tr><td></td><td class="c"></td></tr><tr><td></td><td class="c"></td></tr></table>
+    <div class="line"><span><b>Capacity</b> <span class="unit">(available minus reductions, %)</span></span><span class="box"></span></div>
+  </div>
+  <div class="sec"><h2>E. Blocked periods</h2>
+    <table><tr><th>Freeze, crunch, audit season, reorg…</th><th>From</th><th>To</th><th>Weeks in window</th></tr>
+      <tr><td></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+      <tr><td></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+      <tr><td></td><td class="c"></td><td class="c"></td><td class="c"></td></tr></table>
+    <div class="line"><span><b>Blocked weeks</b> <span class="unit">(only those between work start and the real deadline)</span></span><span class="box"></span></div>
+  </div>
+  <div class="sec"><h2>F. Release and evidence</h2>
+    <div class="line"><span>Code complete before the release that must comply</span><span class="box"></span></div>
+    <div class="line"><span>Validation, evidence and audit readiness</span><span class="box"></span></div>
+    <div class="line"><span><b>Release and evidence weeks</b> <span class="unit">(sum of both)</span></span><span class="box"></span></div>
+    <div class="note">If the real deadline lands inside a blocked period, move it to the start of that period and add the difference here.</div>
+  </div>
+  <div class="sec math"><h2>G. The math</h2>
+    <div class="steps">
+      <div class="step"><b>1</b><span>Calendar weeks (A)</span><span class="box"></span></div>
+      <div class="step"><b>5</b><span>= Working weeks</span><span class="box"></span></div>
+      <div class="step"><b>2</b><span>− Total handoff weeks (B)</span><span class="box"></span></div>
+      <div class="step"><b>6</b><span>× Capacity (D) = <b>Work possible</b></span><span class="box"></span></div>
+      <div class="step"><b>3</b><span>− Waiting before start (C)</span><span class="box"></span></div>
+      <div class="step"><b>7</b><span>Work needed (A)</span><span class="box"></span></div>
+      <div class="step"><b>4</b><span>− Release and evidence (F) − Blocked (E)</span><span class="box"></span></div>
+      <div class="step"><b>8</b><span>Work possible − work needed</span><span class="box"></span></div>
+    </div>
+    <div class="verdict"><span><span class="chkbox"></span> It fits</span><span><span class="chkbox"></span> We are short by ______ weeks</span><span style="font-weight:normal">Latest date the first handoff must begin: ______________</span></div>
+  </div>
+  <div class="sec fix"><h2>H. Win time back: tick your biggest loss and its first move</h2>
+    <div class="fixes">
+      <div><span class="chkbox"></span><span><b>Handoffs:</b> one working group with legal, compliance, security and engineering; interpret in parallel; name partner teams on day one.</span></div>
+      <div><span class="chkbox"></span><span><b>Waiting on guidance:</b> build what won't change (inventory, SBOMs, vulnerability intake) while standards settle.</span></div>
+      <div><span class="chkbox"></span><span><b>Planning:</b> reserve a standing slice of every planning cycle for regulatory work.</span></div>
+      <div><span class="chkbox"></span><span><b>Dependencies:</b> map them, agree dates in writing, escalate any without a committed date.</span></div>
+      <div><span class="chkbox"></span><span><b>Capacity:</b> make it an explicit priority with dedicated people; defer lower-value work.</span></div>
+      <div><span class="chkbox"></span><span><b>Blocked periods:</b> set milestones before each freeze; treat the last one as your real deadline.</span></div>
+      <div><span class="chkbox"></span><span><b>Release lead time:</b> ship compliance on an earlier release train.</span></div>
+      <div><span class="chkbox"></span><span><b>Evidence:</b> generate SBOMs, validation results and audit records in the pipeline as you build.</span></div>
+    </div>
+  </div>
+</div>
+<div class="note">The Compliance Relay · Version 0.4 · Created by Pooja Ravichandra · A generic planning model, not legal advice · Simplified hand calculation: the web calculator and spreadsheet give the exact answer · CC BY 4.0.</div>
+</body></html>

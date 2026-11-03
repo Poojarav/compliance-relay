@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use the Compliance Relay, please cite it as below."
+title: "The Compliance Relay: a framework for estimating how much of a regulatory deadline reaches engineering teams"
+version: "0.4.0"
+date-released: "2026-11-05"
+authors:
+  - family-names: "Ravichandra"
+    given-names: "Pooja"
+license: "Apache-2.0"
+keywords:
+  - "EU Cyber Resilience Act"
+  - "regulatory compliance"
+  - "software supply chain security"
+  - "planning"
+  - "SBOM"
+abstract: "The Compliance Relay is a generic, vendor-neutral framework, calculator, spreadsheet and worksheet for estimating the effective transition period of a regulation: the engineering time that remains after handoffs, waiting on guidance, planning cycles, dependencies, capacity limits and blocked periods."
