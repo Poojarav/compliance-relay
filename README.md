@@ -1,6 +1,6 @@
 # The Compliance Relay
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23906178.svg)](https://doi.org/10.5281/zenodo.23906178) [![Live calculator](https://img.shields.io/badge/calculator-live-2756c9)](https://poojarav.github.io/compliance-relay/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23906177.svg)](https://doi.org/10.5281/zenodo.23906177) [![Live calculator](https://img.shields.io/badge/calculator-live-2756c9)](https://poojarav.github.io/compliance-relay/)
 
 **A free, vendor-neutral framework for finding out how much of a regulatory deadline actually reaches your engineers, and how to win back the rest.**
 
@@ -42,7 +42,7 @@ Version 0.4, the first public release. This is a planning model, not a predictio
 
 ## Citing
 
-Ravichandra, P. (2026). *The Compliance Relay* (Version 0.4.1) [Software]. Zenodo. https://doi.org/10.5281/zenodo.23906178
+Ravichandra, P. (2026). *The Compliance Relay* [Software]. Zenodo. https://doi.org/10.5281/zenodo.23906177 (all versions; v0.4.1: https://doi.org/10.5281/zenodo.23906178)
 
 GitHub's "Cite this repository" button uses [`CITATION.cff`](CITATION.cff).
 
