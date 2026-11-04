@@ -6,6 +6,7 @@ date-released: "2026-11-02"
 authors:
   - family-names: "Ravichandra"
     given-names: "Pooja"
+    orcid: "https://orcid.org/0009-0009-9495-7260"
 license: "Apache-2.0"
 doi: "10.5281/zenodo.23906177"
 repository-code: "https://github.com/Poojarav/compliance-relay"
