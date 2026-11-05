@@ -11,7 +11,10 @@ Regulations like the EU Cyber Resilience Act give organizations years. But a req
 - **Web calculator:** use it online at **https://poojarav.github.io/compliance-relay/**, or open [`calculator/index.html`](calculator/index.html) in any browser. It runs offline.
 - **Spreadsheet:** [`spreadsheet/compliance-relay-calculator.xlsx`](spreadsheet/compliance-relay-calculator.xlsx) works in Excel and Google Sheets. Edit the yellow cells.
 - **Worksheet:** [`worksheet/compliance-relay-worksheet.pdf`](worksheet/compliance-relay-worksheet.pdf) is a one-page printable for workshops.
-- **Guide:** [`GUIDE.md`](GUIDE.md) explains the framework, the calculation, a worked example and how to win time back.
+- **Guide:** [`GUIDE.md`](GUIDE.md) explains the framework, the calculation, a worked example, where to get your numbers and how to win time back.
+- **Survey questions:** [`SURVEY-QUESTIONS.md`](SURVEY-QUESTIONS.md) is a short, reusable question set for readiness surveys that want to measure *why* organizations expect to be late, not only *whether*.
+
+The web calculator opens with the worked example below. Press **Start the clock today** and enter your own numbers, then **Copy a link to this scenario** to share it with your team.
 
 All formats use the same constraints and math, and every value is your own input.
 
@@ -38,7 +41,7 @@ Little public data exists on how long these steps take. If you can share rough, 
 
 ## Status
 
-Version 0.4, the first public release. This is a planning model, not a prediction, and not legal advice. It does not interpret any regulation. See [`CHANGELOG.md`](CHANGELOG.md) for what's planned next.
+Version 0.4.2. This is a planning model, not a prediction, and not legal advice. It does not interpret any regulation. See [`CHANGELOG.md`](CHANGELOG.md) for what's planned next.
 
 ## Citing
 

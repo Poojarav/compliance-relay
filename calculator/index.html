@@ -101,15 +101,15 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">The Compliance Relay · Version 0.4</div>
+    <div class="eyebrow">The Compliance Relay · Version 0.4.2</div>
     <h1>How much CRA time do your engineers really have?</h1>
     <p class="lede">A regulation's deadline is not your engineers' deadline. Requirements pass through handoffs, wait on other teams, compete for people's time, and run into freezes, releases and audits. Add the constraints your organization actually has to see the real engineering window before the EU Cyber Resilience Act applies in full, whether the work fits, and when it must start.</p>
   </header>
 
   <div class="grid">
     <form class="panel" id="f" aria-label="Your organization's constraints">
-      <div class="btns"><button type="button" id="reset">Reset to sample numbers</button></div>
-      <p class="hint">The page opens with sample numbers so you can see how it works. They are not data from any organization. Replace them with your own, and add or remove anything that doesn't fit.</p>
+      <div class="btns"><button type="button" id="reset">Reset to sample numbers</button><button type="button" id="useToday">Start the clock today</button></div>
+      <p class="hint">The page opens with the sample numbers from the guide's worked example, starting 29 Oct 2026, so you can see how it works. They are not data from any organization. Set <b>Clock starts</b> to today, replace the rest with your own numbers, and add or remove anything that doesn't fit. <a href="#results">Jump to results</a></p>
 
       <fieldset>
         <legend><h3>The clock</h3></legend>
@@ -130,7 +130,7 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
         <div class="list" id="relayList"></div>
         <button type="button" class="add" data-add="relay">Add a handoff</button>
         <div><label for="guidance">Waiting on standards or guidance until (optional)</label><input type="date" id="guidance"></div>
-        <p class="hint">Mark a step "runs alongside the step above" when the teams work in parallel. The EU asked for draft vulnerability-handling standards by 30 Aug 2026; formal citation usually takes months after that.</p>
+        <p class="hint">Mark a step "runs alongside the step above" when the teams work in parallel. CRA harmonised standards are still being finalised and only become usable once cited in the EU Official Journal. Enter the date you expect guidance you can build against.</p>
       </fieldset>
 
       <fieldset>
@@ -145,7 +145,7 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
         <div class="row"><label for="capBase">Share of the team's time available for this work (%)</label><input type="number" id="capBase" min="5" max="100"></div>
         <div class="list" id="capList"></div>
         <button type="button" class="add" data-add="cap">Add a capacity reduction</button>
-        <p class="hint">For example job cuts, other regulatory work or a competing launch, as a percentage of the team's time.</p>
+        <p class="hint">Count everything that takes time from this work: vacation and public holidays, on-call and incident response, keeping existing products running, other regulatory work, job cuts or a competing launch. As a rough guide, four to five weeks of vacation and holidays a year is about 10% of a person's time.</p>
       </fieldset>
 
       <fieldset>
@@ -162,7 +162,7 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
         <legend><h3><i style="background:var(--freeze)"></i>Blocked periods</h3></legend>
         <div class="list" id="blockList"></div>
         <button type="button" class="add" data-add="block">Add a blocked period</button>
-        <p class="hint">Code freezes, release crunches, audit seasons, reorganizations: any time engineers cannot work on this.</p>
+        <p class="hint">Code freezes, company shutdowns over the holidays, release crunches, audit seasons, reorganizations: any time engineers cannot work on this at all. Tick "Repeats every year" for anything annual. Spread-out time off belongs under Capacity instead.</p>
       </fieldset>
 
       <fieldset>
@@ -173,7 +173,7 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
     </form>
 
     <div style="display:grid;gap:24px;min-width:0">
-      <section class="panel verdict" aria-live="polite">
+      <section class="panel verdict" id="results" aria-live="polite">
         <h3>Engineering time left</h3>
         <div class="big"><span class="num" id="engW">0</span><span class="of" id="ofW">weeks of 0 on the calendar</span></div>
         <div><span class="chip" id="chip">—</span></div>
@@ -208,7 +208,8 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
       <section class="panel">
         <h2>Win time back: start with the biggest loss</h2>
         <ul class="fixes" id="fixes"></ul>
-        <div class="btns"><button type="button" class="primary" id="copy">Copy results as text</button></div>
+        <div class="btns"><button type="button" class="primary" id="copy">Copy results as text</button><button type="button" id="share">Copy a link to this scenario</button></div>
+        <p class="hint">The link carries your numbers inside the address itself. Nothing is stored or sent anywhere. Use generic labels before you share it.</p>
         <div class="toast" id="toast" role="status"></div>
       </section>
     </div>
@@ -235,14 +236,29 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   function todayISO(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;}
   function sample(){
-    const y=new Date().getFullYear();
-    return {today:todayISO(),deadline:"2027-12-11",work:20,capBase:80,guidance:"",cadence:"3",cycleStart:"1",midcycle:false,cc:4,ev:6,
+    return {today:"2026-10-29",deadline:"2027-12-11",work:20,capBase:80,guidance:"",cadence:"3",cycleStart:"1",midcycle:false,cc:4,ev:6,
       relay:[{label:"Legal interpretation",weeks:4,par:false},{label:"Compliance policy",weeks:4,par:false},{label:"Security program design",weeks:3,par:false},{label:"Finding the right partner teams",weeks:2,par:false},{label:"Product team intake",weeks:2,par:false}],
       deps:[{label:"Waiting on the build platform team",weeks:3}],
       caps:[{label:"Competing regulatory work",pct:10}],
-      blocks:[{label:"Year-end code freeze",from:`${y}-12-15`,to:`${y+1}-01-05`,repeat:true},{label:"Major release crunch",from:"2027-05-01",to:"2027-05-21",repeat:false}]};
+      blocks:[{label:"Year-end code freeze",from:"2026-12-15",to:"2027-01-05",repeat:true},{label:"Major release crunch",from:"2027-05-01",to:"2027-05-21",repeat:false}]};
   }
-  let S=sample();
+  function clean(o){
+    const d=sample();if(!o||typeof o!=="object")return null;
+    const date=v=>/^\d{4}-\d{2}-\d{2}$/.test(String(v||""))?String(v):"";
+    const num=(v,lo,hi,def)=>{v=Number(v);return Number.isFinite(v)?Math.min(hi,Math.max(lo,v)):def;};
+    const str=v=>String(v==null?"":v).slice(0,80);
+    const arr=v=>Array.isArray(v)?v.slice(0,20):[];
+    return {today:date(o.today)||d.today,deadline:date(o.deadline)||d.deadline,work:num(o.work,0,260,d.work),capBase:num(o.capBase,5,100,d.capBase),
+      guidance:date(o.guidance),cadence:["3","6","12"].includes(String(o.cadence))?String(o.cadence):"3",cycleStart:String(Math.round(num(o.cycleStart,1,12,1))),
+      midcycle:!!o.midcycle,cc:num(o.cc,0,52,d.cc),ev:num(o.ev,0,52,d.ev),
+      relay:arr(o.relay).map((r,i)=>({label:str(r&&r.label),weeks:num(r&&r.weeks,0,104,0),par:i>0&&!!(r&&r.par)})),
+      deps:arr(o.deps).map(r=>({label:str(r&&r.label),weeks:num(r&&r.weeks,0,104,0)})),
+      caps:arr(o.caps).map(r=>({label:str(r&&r.label),pct:num(r&&r.pct,0,95,0)})),
+      blocks:arr(o.blocks).map(r=>({label:str(r&&r.label),from:date(r&&r.from),to:date(r&&r.to),repeat:!!(r&&r.repeat)}))};
+  }
+  function encode(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+  function fromHash(){try{const m=/^#s=([A-Za-z0-9_-]+)$/.exec(location.hash||"");if(!m)return null;const b=m[1].replace(/-/g,"+").replace(/_/g,"/");return clean(JSON.parse(decodeURIComponent(escape(atob(b)))));}catch(e){return null;}}
+  let S=fromHash()||sample();
   const NEW={relay:{label:"New handoff",weeks:2,par:false},dep:{label:"Waiting on another team",weeks:2},cap:{label:"Capacity reduction",pct:10},block:{label:"Blocked period",from:"",to:"",repeat:false}};
   const KEY={relay:"relay",dep:"deps",cap:"caps",block:"blocks"};
   function renderLists(){
@@ -287,7 +303,7 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
   let last=null;
   function compute(){
     const t0=toDay(S.today),dl=toDay(S.deadline);
-    if(t0===null||dl===null||dl<=t0){$("engW").textContent="—";$("ofW").textContent="Set a deadline after the clock start";return;}
+    if(t0===null||dl===null||dl<=t0){last=null;$("engW").textContent="—";$("ofW").textContent="Set a deadline after the clock start";const chip=$("chip");chip.textContent="Check the dates";chip.style.color="var(--muted)";["fKick","fArrive","fStart","fFinish","fCap"].forEach(id=>$(id).textContent="—");$("bar").innerHTML="";$("axis").innerHTML="";$("losses").innerHTML="";$("fixes").innerHTML="";return;}
     const relayW=relayWeeks(),relayEnd=t0+relayW*7;
     const g=toDay(S.guidance),arrive=g!==null&&g>relayEnd?g:relayEnd;
     const cad=+S.cadence,sm=+S.cycleStart;
@@ -394,7 +410,7 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
     if(!last)return"";const r=last;
     const lines=["Compliance Relay results",`Clock: ${fmt(r.t0)} to ${fmt(r.dl)} (${r1(wk(r.total))} weeks)`,`Requirement reaches engineers: ${fmt(Math.min(r.arrive,r.dl))}`,`Engineering can start: ${fmt(Math.min(r.start,r.dl))}`,`Real engineering deadline: ${fmt(Math.max(r.t0,r.finish))}`,`Capacity available: ${Math.round(r.cap*100)}%`,`Engineering work possible: ${r1(wk(r.engDays))} weeks`,`Engineering work needed: ${r1(r.need/7)} weeks`,`Latest date the first handoff must begin: ${r.kickoff<r.t0?`already late by ${r1(wk(r.t0-r.kickoff))} weeks`:fmt(r.kickoff)}`,"","Where the time goes:"];
     [...r.losses].sort((a,b)=>b.d-a.d).forEach(l=>lines.push(`- ${l.label}: ${r1(wk(l.d))} weeks`));
-    lines.push("","The Compliance Relay v0.4. Generic planning model. Not legal advice.");
+    lines.push("","The Compliance Relay v0.4.2. Generic planning model. Not legal advice.");
     return lines.join("\n");
   }
   $("copy").addEventListener("click",()=>{const txt=summary(),toast=$("toast");
@@ -408,6 +424,13 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
     if(add){read();S[KEY[add.dataset.add]].push({...NEW[add.dataset.add]});renderLists();compute();const list=S[KEY[add.dataset.add]];const id=`${add.dataset.add}-${list.length-1}-label`;const el=$(id);if(el){el.focus();el.select();}}
   });
   $("reset").addEventListener("click",()=>{S=sample();writeSimple();renderLists();compute();});
+  $("useToday").addEventListener("click",()=>{read();S.today=todayISO();writeSimple();compute();});
+  $("share").addEventListener("click",()=>{read();const url=location.href.split("#")[0]+"#s="+encode(S),toast=$("toast");
+    try{history.replaceState(null,"",url);}catch(e){}
+    const done=()=>{toast.textContent="Copied a link to this scenario.";setTimeout(()=>toast.textContent="",2500);};
+    const fallback=()=>{const ta=document.createElement("textarea");ta.value=url;ta.style.width="100%";ta.rows=3;toast.textContent="Select the link below and copy it.";toast.after(ta);ta.select();};
+    try{navigator.clipboard.writeText(url).then(done,fallback);}catch(e){fallback();}
+  });
   $("f").addEventListener("input",()=>{read();compute();});
   $("f").addEventListener("change",()=>{read();compute();});
   $("f").addEventListener("submit",e=>e.preventDefault());

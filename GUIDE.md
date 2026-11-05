@@ -2,7 +2,7 @@
 
 ### How much of a regulatory deadline actually reaches the engineers who must deliver?
 
-*Version 0.4 · Pooja Ravichandra · Not legal advice · Licensed under CC BY 4.0*
+*Version 0.4.2 · Pooja Ravichandra · Not legal advice · Licensed under CC BY 4.0*
 
 ---
 
@@ -12,7 +12,7 @@ The EU Cyber Resilience Act (CRA) entered into force in December 2024. Its vulne
 
 Engineers do not get three years. Inside an organization that ships software, a new obligation rarely goes straight to the people who build the product. It is read by legal, turned into policy by compliance, designed into a program by security, translated into tooling by platform teams, and only then lands in a product team's backlog. Each handoff takes time. Then the work meets the organization's calendar: planning cycles, dependencies on other teams, competing priorities, code freezes, release trains and audit seasons.
 
-Surveys suggest the gap is real. In the OpenSSF and Linux Foundation Research *2026 CRA Awareness and Readiness Report*, only **41%** of manufacturers expected to be compliant by December 2027, and **39%** did not know when they would be.
+Surveys suggest the gap is real. In the OpenSSF and Linux Foundation Research *2026 CRA Awareness and Readiness Report*, only **41%** of manufacturers expected to be fully compliant by the December 2027 deadline, and **39%** were uncertain whether they could meet the requirements at all. The survey measures *whether* organizations expect to be ready; the Compliance Relay is a way to examine *why*.
 
 The Compliance Relay is a simple, generic framework for seeing where that time goes, and for winning it back.
 
@@ -51,6 +51,8 @@ All three use the same constraints and the same math, so they give the same answ
 - **Spreadsheet template** (`spreadsheet/compliance-relay-calculator.xlsx`). Works in Excel and Google Sheets. Edit the yellow cells. Best for sharing inside a compliance program and adapting to your organization.
 - **Printable worksheet** (`worksheet/compliance-relay-worksheet.pdf`). One page with fill-in boxes. Best for workshops and leadership meetings.
 
+The web calculator can also **copy a link to your scenario**, so a team can review the same numbers. The numbers travel inside the link itself; nothing is stored or sent anywhere.
+
 ## A worked example
 
 These are **sample numbers**, not data from any organization.
@@ -70,7 +72,31 @@ A team starts on 29 October 2026 with a 20-week engineering estimate. The requir
 
 The team needs 20 weeks of work and can do 16.3: **short by 3.7 weeks**. To finish on time, the first handoff needed to start about six weeks ago.
 
-Two changes reverse the verdict. Letting compliance work enter mid-cycle and removing one handoff gives the team almost 22 weeks of work possible: **it fits, with about 2 weeks to spare.**
+The constraints interact, so the order of fixes matters:
+
+| Change | Work possible | Verdict |
+| --- | --- | --- |
+| Remove the 4-week legal handoff, nothing else | 16.3 weeks | Still short by 3.7: the work just waits longer for the next planning cycle |
+| Let compliance work enter mid-cycle | 19.1 weeks | Short by 0.9 |
+| Mid-cycle entry **and** run legal interpretation and compliance policy in parallel | 21.9 weeks | **Fits, with about 2 weeks to spare** |
+
+Shortening handoffs alone recovers nothing here, because the next planning cycle absorbs the gain. The two changes only work together.
+
+## Where to get your numbers
+
+Rough numbers are fine. Run the calculator twice, with an optimistic and a pessimistic value for anything you are unsure of, and see whether the verdict changes.
+
+| Input | How to estimate it |
+| --- | --- |
+| **Clock starts** | Today. To look back at how much time has already gone, use the date your organization first started work on the obligation. |
+| **Engineering work** | Your team's estimate, in weeks of full team time. If you have person-weeks, divide by the number of people on the team. |
+| **Handoffs** | List every team that touched the last comparable regulation or policy before engineering got a ticket. Ask each for its typical turnaround, or compare dates in past tickets: policy approved, program designed, backlog item created. |
+| **Waiting on guidance** | The date you expect standards or official guidance you can build against. Leave it blank for work that will not change. |
+| **Planning** | Your real planning cadence, and whether regulatory work has ever entered a plan mid-cycle. |
+| **Dependencies** | For each team that must deliver first, the gap between when the requirement reaches you and their committed date. No committed date is a risk in itself. |
+| **Capacity** | Start at 100% and subtract what the team actually spends elsewhere: vacation and public holidays (four to five weeks a year is about 10%), on-call and incident response, keeping existing products running, and other regulatory work. Time-tracking data or the last two sprints are a good check. |
+| **Blocked periods** | Your freeze calendar, release calendar, audit calendar and any holiday shutdowns. Mark annual ones as repeating. |
+| **Release and evidence** | Code-complete lead time from your release calendar. Evidence time from how long your last audit or certification took to prepare. |
 
 ## Winning time back: a 90-day plan
 
@@ -102,6 +128,7 @@ The Compliance Relay is not specific to one regulation. Enter any deadline: late
 ## Limits
 
 - This is a planning model, not a prediction. Its answers are only as good as the numbers you enter.
+- Weeks are calendar weeks. Time off and other duties are handled through capacity, and full stops through blocked periods.
 - Handoff durations vary widely, and little public data exists on them yet.
 - The spreadsheet counts overlapping blocked periods twice, and its latest-start date is an approximation. The web calculator counts day by day.
 - It is not legal advice and does not interpret the CRA.
@@ -110,7 +137,7 @@ The Compliance Relay is not specific to one regulation. Enter any deadline: late
 
 - Regulation (EU) 2024/2847 (Cyber Resilience Act), *Official Journal of the European Union*, 20 November 2024.
 - European Commission, standardisation request C(2025) 618 to CEN, CENELEC and ETSI in support of the CRA, 3 February 2025.
-- Linux Foundation Research and OpenSSF, *2026 CRA Awareness and Readiness Report*, June 2026.
+- Linux Foundation Research and OpenSSF, *2026 CRA Awareness and Readiness Report*, June 2026. Summary: [The CRA Readiness Reality](https://www.linuxfoundation.org/blog/the-cra-readiness-reality-what-changed-and-what-didnt-between-2025-and-2026), Linux Foundation, 19 June 2026.
 - Kubernetes release cycle, kubernetes.io, for an example of a public release calendar with scheduled freezes.
 
 ## Credit and license
