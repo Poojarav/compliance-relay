@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0
+
+Prompted by feedback at the OpenSSF Global Cyber Policy Working Group (9 November 2026).
+
+- **Company size.** Choose Micro, Small, Medium or Large (EU definitions). "Use typical starting values" fills clearly labeled, illustrative assumptions for that size, showing how the bottleneck moves from handoffs and planning at large companies to capacity at small ones. The results show what the CRA treats differently by size (Articles 33 and 64).
+- **Cost of being late.** Optional inputs for worldwide turnover and the product's EU revenue show the maximum CRA fine (€15M or 2.5% of turnover, whichever is higher) and the estimated EU sales at risk from the delay. Added to the spreadsheet too.
+- Survey questions: new organization-size question so answers can be compared by size.
+- The verdict now says "Just fits" instead of "Short by 0 weeks" when the work fits exactly.
+- The printable worksheet is unchanged; size and cost are optional additions.
+
 ## 0.4.2
 
 - Calculator: share a scenario as a link (the numbers stay inside the link; nothing is stored or sent), a "Start the clock today" button, and a jump link to the results

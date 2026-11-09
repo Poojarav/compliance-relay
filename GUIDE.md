@@ -2,7 +2,7 @@
 
 ### How much of a regulatory deadline actually reaches the engineers who must deliver?
 
-*Version 0.4.2 · Pooja Ravichandra · Not legal advice · Licensed under CC BY 4.0*
+*Version 0.5.0 · Pooja Ravichandra · Not legal advice · Licensed under CC BY 4.0*
 
 ---
 
@@ -98,6 +98,32 @@ Rough numbers are fine. Run the calculator twice, with an optimistic and a pessi
 | **Blocked periods** | Your freeze calendar, release calendar, audit calendar and any holiday shutdowns. Mark annual ones as repeating. |
 | **Release and evidence** | Code-complete lead time from your release calendar. Evidence time from how long your last audit or certification took to prepare. |
 
+## Company size: the bottleneck moves
+
+Every company faces the same deadline, but size changes **where** the time goes.
+
+- **Large companies** lose most time in the relay: many specialist teams, sequential handoffs and fixed planning cycles.
+- **Small and micro companies** have short relays and flexible planning, often with an outside advisor for interpretation. Their constraint is **capacity**: a few people who also build the product, support customers and fix urgent issues, with little budget to add more.
+
+The web calculator can fill illustrative starting values for each size, from Micro (under 10 people) to Large (250 or more), using the EU definitions of micro, small and medium-sized enterprises. These are **assumptions, not data**, chosen to show the pattern: in the sample, the biggest loss moves from handoffs at a large company to reduced capacity at small and micro ones. Replace them with your own numbers.
+
+What the CRA itself treats differently by size:
+
+- The essential requirements and the 11 December 2027 deadline are the same for every size.
+- Micro and small enterprises cannot be fined for missing the 24-hour early-warning deadline for actively exploited vulnerabilities and severe incidents (Article 64(10)). Every other obligation, and its fines, still applies.
+- Member States may offer SMEs training, testing support and regulatory sandboxes, and the Commission may publish a simplified technical documentation form for micro and small enterprises (Article 33). EU funding for SME compliance also runs through the Digital Europe Programme.
+- When setting a fine, authorities must take the company's size into account, with particular regard to SMEs and start-ups (Article 64(5)).
+- Open-source software stewards cannot be fined under the CRA (Article 64(10)).
+
+## The cost of being late
+
+Two optional inputs turn the verdict into a business case:
+
+- **Maximum fine.** Non-compliance with the essential requirements, or with the obligations in Articles 13 and 14, can be fined up to €15 million or 2.5% of worldwide annual turnover, whichever is higher (Article 64(2)). Above €600 million in turnover, the 2.5% figure is the larger one. These are maximums: authorities weigh the size of the company and the severity and duration of the infringement.
+- **EU sales at risk.** If the work is short, the calculator estimates how long past the deadline it will take to finish (the shortfall divided by the share of time available) and multiplies it by the product's weekly EU revenue. A product that does not meet the requirements cannot be placed on the EU market, and authorities can order it withdrawn.
+
+In the worked example, a company with €1 billion in turnover and €52 million a year of EU sales for the product faces a maximum fine of €25 million, and about €5.3 million of sales at risk from a delay of about 5.3 weeks. These are estimates, not legal advice.
+
 ## Winning time back: a 90-day plan
 
 Start with your biggest loss.
@@ -129,13 +155,15 @@ The Compliance Relay is not specific to one regulation. Enter any deadline: late
 
 - This is a planning model, not a prediction. Its answers are only as good as the numbers you enter.
 - Weeks are calendar weeks. Time off and other duties are handled through capacity, and full stops through blocked periods.
+- The company-size starting values are illustrative assumptions, not measurements. The delay and sales-at-risk figures are simple estimates that ignore blocked periods after the deadline.
 - Handoff durations vary widely, and little public data exists on them yet.
 - The spreadsheet counts overlapping blocked periods twice, and its latest-start date is an approximation. The web calculator counts day by day.
 - It is not legal advice and does not interpret the CRA.
 
 ## References
 
-- Regulation (EU) 2024/2847 (Cyber Resilience Act), *Official Journal of the European Union*, 20 November 2024.
+- Regulation (EU) 2024/2847 (Cyber Resilience Act), *Official Journal of the European Union*, 20 November 2024; Article 33 (support for SMEs) and Article 64 (penalties).
+- Commission Recommendation 2003/361/EC on the definition of micro, small and medium-sized enterprises.
 - European Commission, standardisation request C(2025) 618 to CEN, CENELEC and ETSI in support of the CRA, 3 February 2025.
 - Linux Foundation Research and OpenSSF, *2026 CRA Awareness and Readiness Report*, June 2026. Summary: [The CRA Readiness Reality](https://www.linuxfoundation.org/blog/the-cra-readiness-reality-what-changed-and-what-didnt-between-2025-and-2026), Linux Foundation, 19 June 2026.
 - Kubernetes release cycle, kubernetes.io, for an example of a public release calendar with scheduled freezes.

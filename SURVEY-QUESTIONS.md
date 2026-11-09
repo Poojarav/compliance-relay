@@ -6,6 +6,10 @@ Each question maps to one constraint in the Compliance Relay, so answers can be 
 
 ## Core questions
 
+0. **Organization size.** How many people work in your organization? *(Lets every other answer be compared by size.)*
+   *Under 10 · 10–49 · 50–249 · 250–999 · 1,000 or more*
+   → Company size
+
 1. **Time to engineering.** Roughly how long after your organization started work on the CRA did the first CRA requirement reach an engineering team's backlog?
    *Less than 1 month · 1–3 months · 3–6 months · 6–12 months · More than 12 months · Not yet · Don't know*
    → Handoffs
@@ -49,7 +53,7 @@ Each question maps to one constraint in the Compliance Relay, so answers can be 
 
 ## Notes for survey designers
 
-- Questions 1, 7 and 9 give the most insight if space is limited.
+- Questions 0, 1, 7 and 9 give the most insight if space is limited. Size (question 0) matters most for interpretation: small organizations tend to be limited by capacity, large ones by handoffs and planning.
 - Ranges, not exact figures, keep responses anonymous and easier to answer.
 - The same questions work for any regulation with a fixed deadline: replace "CRA" and the date.
 

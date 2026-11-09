@@ -94,6 +94,11 @@ td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-variant-nu
 .fixes p{margin:2px 0 0;color:var(--muted);font-size:14px}
 footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
 .toast{font-size:12.5px;color:var(--good);min-height:1em}
+.impact{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.impact .fact b{font-size:20px}
+.notes{margin:0;padding-left:18px;display:grid;gap:8px;font-size:14px}
+.notes li{color:var(--ink)}
+.notes li span{color:var(--muted)}
 @media (prefers-reduced-motion:no-preference){.seg,.freeze{transition:left .25s ease,width .25s ease}}
 </style>
 </head>
@@ -101,7 +106,7 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">The Compliance Relay · Version 0.4.2</div>
+    <div class="eyebrow">The Compliance Relay · Version 0.5.0</div>
     <h1>How much CRA time do your engineers really have?</h1>
     <p class="lede">A regulation's deadline is not your engineers' deadline. Requirements pass through handoffs, wait on other teams, compete for people's time, and run into freezes, releases and audits. Add the constraints your organization actually has to see the real engineering window before the EU Cyber Resilience Act applies in full, whether the work fits, and when it must start.</p>
   </header>
@@ -118,6 +123,16 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
           <div><label for="deadline">Deadline</label><input type="date" id="deadline"></div>
         </div>
         <p class="hint">11 Dec 2027 is when the CRA's essential requirements apply in full. Any other regulatory deadline works the same way.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend><h3><i style="background:var(--muted)"></i>Company size</h3></legend>
+        <div class="row2">
+          <div><label for="size">Size (EU SME definitions)</label>
+            <select id="size"><option value="">Not set</option><option value="micro">Micro: under 10 people</option><option value="small">Small: under 50 people</option><option value="medium">Medium: under 250 people</option><option value="large">Large: 250 people or more</option></select></div>
+          <div style="align-self:end"><button type="button" id="applySize" style="width:100%">Use typical starting values</button></div>
+        </div>
+        <p class="hint" id="sizeHint">Size changes where time is lost. Larger companies lose it in handoffs and planning; smaller ones have short relays but little spare capacity. The button fills illustrative starting values for that size, not data. Replace them with your own.</p>
       </fieldset>
 
       <fieldset>
@@ -170,6 +185,13 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
         <div class="row"><label for="cc">Code complete before the release that must comply (weeks)</label><input type="number" id="cc" min="0" max="52"></div>
         <div class="row"><label for="ev">Validation, evidence and audit readiness (weeks)</label><input type="number" id="ev" min="0" max="52"></div>
       </fieldset>
+
+      <fieldset>
+        <legend><h3><i style="background:var(--crit)"></i>Cost of being late (optional)</h3></legend>
+        <div class="row"><label for="turnover">Company's worldwide annual turnover (€ millions)</label><input type="number" id="turnover" min="0" step="any" placeholder="—"></div>
+        <div class="row"><label for="euRev">This product's EU revenue per year (€ millions)</label><input type="number" id="euRev" min="0" step="any" placeholder="—"></div>
+        <p class="hint">Used only to estimate the maximum fine and the EU sales at risk if the work is late. Nothing is stored or sent.</p>
+      </fieldset>
     </form>
 
     <div style="display:grid;gap:24px;min-width:0">
@@ -212,6 +234,18 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
         <p class="hint">The link carries your numbers inside the address itself. Nothing is stored or sent anywhere. Use generic labels before you share it.</p>
         <div class="toast" id="toast" role="status"></div>
       </section>
+
+      <section class="panel" id="impactPanel">
+        <h2>If you miss the deadline</h2>
+        <div class="impact">
+          <div class="fact"><b id="iFine">—</b><span>Maximum CRA fine for non-compliance with the essential requirements: €15M or 2.5% of worldwide turnover, whichever is higher</span></div>
+          <div class="fact"><b id="iDelay">—</b><span>Estimated time past the deadline before the work is done</span></div>
+          <div class="fact"><b id="iRev">—</b><span>EU sales at risk while the product can't be placed on the EU market</span></div>
+        </div>
+        <p class="hint">Fines are maximums; authorities weigh the size of the company, the severity and the duration. A non-compliant product can also be ordered off the EU market. Estimates only, not legal advice.</p>
+        <h2 id="sizeTitle">What the CRA says about company size</h2>
+        <ul class="notes" id="sizeNotes"></ul>
+      </section>
     </div>
   </div>
 
@@ -236,19 +270,39 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   function todayISO(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;}
   function sample(){
-    return {today:"2026-10-29",deadline:"2027-12-11",work:20,capBase:80,guidance:"",cadence:"3",cycleStart:"1",midcycle:false,cc:4,ev:6,
+    return {size:"large",turnover:"",euRev:"",today:"2026-10-29",deadline:"2027-12-11",work:20,capBase:80,guidance:"",cadence:"3",cycleStart:"1",midcycle:false,cc:4,ev:6,
       relay:[{label:"Legal interpretation",weeks:4,par:false},{label:"Compliance policy",weeks:4,par:false},{label:"Security program design",weeks:3,par:false},{label:"Finding the right partner teams",weeks:2,par:false},{label:"Product team intake",weeks:2,par:false}],
       deps:[{label:"Waiting on the build platform team",weeks:3}],
       caps:[{label:"Competing regulatory work",pct:10}],
       blocks:[{label:"Year-end code freeze",from:"2026-12-15",to:"2027-01-05",repeat:true},{label:"Major release crunch",from:"2027-05-01",to:"2027-05-21",repeat:false}]};
   }
+  const PROFILES={
+    large:{note:"many handoffs across specialist teams and quarterly planning",capBase:80,cadence:"3",cycleStart:"1",midcycle:false,cc:4,ev:6,
+      relay:[{label:"Legal interpretation",weeks:4,par:false},{label:"Compliance policy",weeks:4,par:false},{label:"Security program design",weeks:3,par:false},{label:"Finding the right partner teams",weeks:2,par:false},{label:"Product team intake",weeks:2,par:false}],
+      deps:[{label:"Waiting on the build platform team",weeks:3}],caps:[{label:"Competing regulatory work",pct:10}],
+      blocks:[{label:"Year-end code freeze",from:"2026-12-15",to:"2027-01-05",repeat:true},{label:"Major release crunch",from:"2027-05-01",to:"2027-05-21",repeat:false}]},
+    medium:{note:"fewer handoffs, quarterly planning and a team shared with roadmap work",capBase:70,cadence:"3",cycleStart:"1",midcycle:false,cc:4,ev:6,
+      relay:[{label:"Legal and compliance interpretation",weeks:4,par:false},{label:"Security program design",weeks:3,par:false},{label:"Product team intake",weeks:2,par:false}],
+      deps:[{label:"Waiting on a platform or vendor team",weeks:3}],caps:[{label:"Competing regulatory work",pct:10}],
+      blocks:[{label:"Year-end code freeze",from:"2026-12-15",to:"2027-01-05",repeat:true},{label:"Major release crunch",from:"2027-05-01",to:"2027-05-21",repeat:false}]},
+    small:{note:"a short relay with outside help and flexible planning, but a small team that also runs support and the product",capBase:50,cadence:"3",cycleStart:"1",midcycle:true,cc:2,ev:5,
+      relay:[{label:"Interpretation with an outside advisor",weeks:4,par:false},{label:"Product lead turns it into work",weeks:2,par:false}],
+      deps:[{label:"Waiting on an upstream or vendor fix",weeks:3}],caps:[{label:"Customer support and urgent fixes",pct:10}],
+      blocks:[{label:"Year-end break",from:"2026-12-20",to:"2027-01-03",repeat:true}]},
+    micro:{note:"a founder-led relay and no planning cycle, but only a few people who do everything",capBase:30,cadence:"3",cycleStart:"1",midcycle:true,cc:2,ev:6,
+      relay:[{label:"Founder reads and interprets",weeks:3,par:false},{label:"Outside advisor review",weeks:3,par:false}],
+      deps:[{label:"Waiting on an upstream or vendor fix",weeks:3}],caps:[],
+      blocks:[{label:"Year-end break",from:"2026-12-20",to:"2027-01-03",repeat:true}]}
+  };
+  const SIZE_NAME={micro:"micro",small:"small",medium:"medium-sized",large:"large"};
   function clean(o){
     const d=sample();if(!o||typeof o!=="object")return null;
     const date=v=>/^\d{4}-\d{2}-\d{2}$/.test(String(v||""))?String(v):"";
     const num=(v,lo,hi,def)=>{v=Number(v);return Number.isFinite(v)?Math.min(hi,Math.max(lo,v)):def;};
     const str=v=>String(v==null?"":v).slice(0,80);
     const arr=v=>Array.isArray(v)?v.slice(0,20):[];
-    return {today:date(o.today)||d.today,deadline:date(o.deadline)||d.deadline,work:num(o.work,0,260,d.work),capBase:num(o.capBase,5,100,d.capBase),
+    const money=v=>{if(v===""||v==null)return "";const n=Number(v);return Number.isFinite(n)&&n>=0?Math.min(n,1e7):"";};
+    return {size:["micro","small","medium","large"].includes(o.size)?o.size:"",turnover:money(o.turnover),euRev:money(o.euRev),today:date(o.today)||d.today,deadline:date(o.deadline)||d.deadline,work:num(o.work,0,260,d.work),capBase:num(o.capBase,5,100,d.capBase),
       guidance:date(o.guidance),cadence:["3","6","12"].includes(String(o.cadence))?String(o.cadence):"3",cycleStart:String(Math.round(num(o.cycleStart,1,12,1))),
       midcycle:!!o.midcycle,cc:num(o.cc,0,52,d.cc),ev:num(o.ev,0,52,d.ev),
       relay:arr(o.relay).map((r,i)=>({label:str(r&&r.label),weeks:num(r&&r.weeks,0,104,0),par:i>0&&!!(r&&r.par)})),
@@ -276,11 +330,12 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
       d.innerHTML=`<div class="top" style="grid-template-columns:minmax(0,1fr) 30px"><input type="text" id="block-${i}-label" aria-label="Blocked period name" value="${esc(r.label)}"><button type="button" class="x" data-del="block" data-i="${i}" aria-label="Remove ${esc(r.label)}">×</button></div><div class="dates"><input type="date" id="block-${i}-from" aria-label="From" value="${r.from}"><input type="date" id="block-${i}-to" aria-label="To" value="${r.to}"></div><label class="check"><input type="checkbox" id="block-${i}-repeat" ${r.repeat?"checked":""}> <span>Repeats every year</span></label>`;bl.appendChild(d);});
   }
   function writeSimple(){
-    ["today","deadline","work","capBase","guidance","cadence","cycleStart","cc","ev"].forEach(k=>{$(k).value=S[k];});
+    ["size","turnover","euRev","today","deadline","work","capBase","guidance","cadence","cycleStart","cc","ev"].forEach(k=>{$(k).value=S[k];});
     $("midcycle").checked=!!S.midcycle;
   }
   function read(){
-    ["today","deadline","guidance","cadence","cycleStart"].forEach(k=>S[k]=$(k).value);
+    ["size","today","deadline","guidance","cadence","cycleStart"].forEach(k=>S[k]=$(k).value);
+    ["turnover","euRev"].forEach(k=>{const v=$(k).value;S[k]=v===""?"":Math.max(0,+v||0);});
     ["work","capBase","cc","ev"].forEach(k=>S[k]=+$(k).value||0);
     S.midcycle=$("midcycle").checked;
     S.relay=S.relay.map((r,i)=>({label:$(`relay-${i}-label`).value,weeks:+$(`relay-${i}-weeks`).value||0,par:i>0&&!!($(`relay-${i}-par`)||{}).checked}));
@@ -303,7 +358,7 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
   let last=null;
   function compute(){
     const t0=toDay(S.today),dl=toDay(S.deadline);
-    if(t0===null||dl===null||dl<=t0){last=null;$("engW").textContent="—";$("ofW").textContent="Set a deadline after the clock start";const chip=$("chip");chip.textContent="Check the dates";chip.style.color="var(--muted)";["fKick","fArrive","fStart","fFinish","fCap"].forEach(id=>$(id).textContent="—");$("bar").innerHTML="";$("axis").innerHTML="";$("losses").innerHTML="";$("fixes").innerHTML="";return;}
+    if(t0===null||dl===null||dl<=t0){last=null;$("engW").textContent="—";$("ofW").textContent="Set a deadline after the clock start";const chip=$("chip");chip.textContent="Check the dates";chip.style.color="var(--muted)";["fKick","fArrive","fStart","fFinish","fCap"].forEach(id=>$(id).textContent="—");$("bar").innerHTML="";$("axis").innerHTML="";$("losses").innerHTML="";$("fixes").innerHTML="";["iFine","iDelay","iRev"].forEach(id=>$(id).textContent="—");renderSize();return;}
     const relayW=relayWeeks(),relayEnd=t0+relayW*7;
     const g=toDay(S.guidance),arrive=g!==null&&g>relayEnd?g:relayEnd;
     const cad=+S.cadence,sm=+S.cycleStart;
@@ -377,7 +432,8 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
     const chip=$("chip"),spare=engW-r.need/7;
     if(engW<=0){chip.textContent="No engineering time left";chip.style.color="var(--crit)";}
     else if(r.need<=0){chip.textContent="Enter the work needed to check the fit";chip.style.color="var(--muted)";}
-    else if(spare<0){chip.textContent=`Short by ${r1(-spare)} weeks of work`;chip.style.color="var(--crit)";}
+    else if(spare<-0.05){chip.textContent=`Short by ${r1(-spare)} weeks of work`;chip.style.color="var(--crit)";}
+    else if(spare<0.05){chip.textContent="Just fits, with nothing to spare";chip.style.color="var(--warn)";}
     else{chip.textContent=`Fits, with ${r1(spare)} weeks of work to spare`;chip.style.color=spare<4?"var(--warn)":"var(--good)";}
     $("fKick").textContent=r.need<=0?"—":(r.kickoff<r.t0?`Already late by ${r1(wk(r.t0-r.kickoff))} weeks`:fmt(r.kickoff));
     $("fArrive").textContent=r.arrive>=r.dl?"After the deadline":fmt(r.arrive);
@@ -405,12 +461,34 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
     const fx=$("fixes");fx.innerHTML="";const used=new Set();
     sorted.forEach(l=>{if(used.has(l.k)||used.size>=3)return;used.add(l.k);const[t,p]=FIX[l.k];const li=document.createElement("li");li.style.setProperty("--c",l.c);li.innerHTML=`<div><b>${t}</b><p>${p}</p></div>`;fx.appendChild(li);});
     if(!sorted.length)fx.innerHTML="<li><div><b>No losses to recover</b><p>Your inputs leave the full calendar for engineering.</p></div></li>";
+    renderImpact(r,spare);renderSize();
+  }
+  const eur=m=>m>=1000?`€${(m/1000).toLocaleString(undefined,{maximumFractionDigits:2})}B`:`€${(Math.round(m*10)/10).toLocaleString(undefined,{maximumFractionDigits:1})}M`;
+  function renderImpact(r,spare){
+    const t=S.turnover,rev=S.euRev;
+    $("iFine").textContent=t===""?"Enter turnover":`Up to ${eur(Math.max(15,0.025*t))}`;
+    if(r.need<=0){$("iDelay").textContent="Enter the work needed";$("iRev").textContent="—";return;}
+    if(spare>=-0.05){$("iDelay").textContent="On time";$("iRev").textContent="None, if the plan holds";return;}
+    const delayW=(-spare)/Math.max(r.cap,0.05);
+    $("iDelay").textContent=`About ${r1(delayW)} weeks`;
+    $("iRev").textContent=rev===""?"Enter EU revenue":`About ${eur(rev/52*delayW)}`;
+  }
+  function renderSize(){
+    const n=$("sizeNotes"),sz=S.size,items=[];
+    items.push(["The essential requirements and the 11 December 2027 deadline are the same for every company size.",""]);
+    if(sz==="micro"||sz==="small")items.push(["Micro and small enterprises can't be fined for missing the 24-hour early-warning deadline for actively exploited vulnerabilities and severe incidents.","Article 64(10). Every other obligation, and its fines, still applies."]);
+    if(sz&&sz!=="large")items.push(["Member States may offer SMEs training, testing support and regulatory sandboxes, and the Commission may publish a simplified technical documentation form for micro and small enterprises.","Article 33. EU funding for SME compliance also runs through the Digital Europe Programme."]);
+    if(sz==="large")items.push(["Above €600M in worldwide turnover, the 2.5% cap exceeds €15M, so the maximum fine grows with the company.",""]);
+    items.push(["When setting a fine, authorities must take the company's size into account, with particular regard to SMEs and start-ups.","Article 64(5)."]);
+    items.push(["Open-source software stewards can't be fined under the CRA.","Article 64(10)."]);
+    n.innerHTML=items.map(([a,b])=>`<li>${esc(a)}${b?` <span>${esc(b)}</span>`:""}</li>`).join("");
+    $("sizeTitle").textContent=sz?`What the CRA says for ${SIZE_NAME[sz]} companies`:"What the CRA says about company size";
   }
   function summary(){
     if(!last)return"";const r=last;
-    const lines=["Compliance Relay results",`Clock: ${fmt(r.t0)} to ${fmt(r.dl)} (${r1(wk(r.total))} weeks)`,`Requirement reaches engineers: ${fmt(Math.min(r.arrive,r.dl))}`,`Engineering can start: ${fmt(Math.min(r.start,r.dl))}`,`Real engineering deadline: ${fmt(Math.max(r.t0,r.finish))}`,`Capacity available: ${Math.round(r.cap*100)}%`,`Engineering work possible: ${r1(wk(r.engDays))} weeks`,`Engineering work needed: ${r1(r.need/7)} weeks`,`Latest date the first handoff must begin: ${r.kickoff<r.t0?`already late by ${r1(wk(r.t0-r.kickoff))} weeks`:fmt(r.kickoff)}`,"","Where the time goes:"];
+    const lines=["Compliance Relay results",`Clock: ${fmt(r.t0)} to ${fmt(r.dl)} (${r1(wk(r.total))} weeks)`,`Requirement reaches engineers: ${fmt(Math.min(r.arrive,r.dl))}`,`Engineering can start: ${fmt(Math.min(r.start,r.dl))}`,`Real engineering deadline: ${fmt(Math.max(r.t0,r.finish))}`,`Capacity available: ${Math.round(r.cap*100)}%`,`Engineering work possible: ${r1(wk(r.engDays))} weeks`,`Engineering work needed: ${r1(r.need/7)} weeks`,`Latest date the first handoff must begin: ${r.kickoff<r.t0?`already late by ${r1(wk(r.t0-r.kickoff))} weeks`:fmt(r.kickoff)}`,...(S.size?[`Company size: ${S.size}`]:[]),`Maximum CRA fine: ${$("iFine").textContent}`,`Estimated delay: ${$("iDelay").textContent}`,`EU sales at risk: ${$("iRev").textContent}`,"","Where the time goes:"];
     [...r.losses].sort((a,b)=>b.d-a.d).forEach(l=>lines.push(`- ${l.label}: ${r1(wk(l.d))} weeks`));
-    lines.push("","The Compliance Relay v0.4.2. Generic planning model. Not legal advice.");
+    lines.push("","The Compliance Relay v0.5.0. Generic planning model. Not legal advice.");
     return lines.join("\n");
   }
   $("copy").addEventListener("click",()=>{const txt=summary(),toast=$("toast");
@@ -425,6 +503,10 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
   });
   $("reset").addEventListener("click",()=>{S=sample();writeSimple();renderLists();compute();});
   $("useToday").addEventListener("click",()=>{read();S.today=todayISO();writeSimple();compute();});
+  $("applySize").addEventListener("click",()=>{read();const sz=S.size,p=PROFILES[sz],h=$("sizeHint");
+    if(!p){h.textContent="Choose a company size first.";return;}
+    const {note,...vals}=p;S={...S,...JSON.parse(JSON.stringify(vals))};writeSimple();renderLists();compute();
+    h.textContent=`Filled illustrative starting values for a ${SIZE_NAME[sz]} company: ${note}. These are assumptions, not data. Replace them with your own.`;});
   $("share").addEventListener("click",()=>{read();const url=location.href.split("#")[0]+"#s="+encode(S),toast=$("toast");
     try{history.replaceState(null,"",url);}catch(e){}
     const done=()=>{toast.textContent="Copied a link to this scenario.";setTimeout(()=>toast.textContent="",2500);};
