@@ -127,12 +127,11 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
 
       <fieldset>
         <legend><h3><i style="background:var(--muted)"></i>Company size</h3></legend>
-        <div class="row2">
+        <div>
           <div><label for="size">Size (EU SME definitions)</label>
             <select id="size"><option value="">Not set</option><option value="micro">Micro: under 10 people</option><option value="small">Small: under 50 people</option><option value="medium">Medium: under 250 people</option><option value="large">Large: 250 people or more</option></select></div>
-          <div style="align-self:end"><button type="button" id="applySize" style="width:100%">Use typical starting values</button></div>
         </div>
-        <p class="hint" id="sizeHint">Size changes where time is lost. Larger companies lose it in handoffs and planning; smaller ones have short relays but little spare capacity. The button fills illustrative starting values for that size, not data. Replace them with your own.</p>
+        <p class="hint" id="sizeHint">Shows what the CRA treats differently for your company size. Enter your own handoffs, capacity and planning below; a smaller company often has fewer handoffs but less spare capacity.</p>
       </fieldset>
 
       <fieldset>
@@ -270,30 +269,12 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   function todayISO(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;}
   function sample(){
-    return {size:"large",turnover:"",euRev:"",today:"2026-10-29",deadline:"2027-12-11",work:20,capBase:80,guidance:"",cadence:"3",cycleStart:"1",midcycle:false,cc:4,ev:6,
+    return {size:"",turnover:"",euRev:"",today:"2026-10-29",deadline:"2027-12-11",work:20,capBase:80,guidance:"",cadence:"3",cycleStart:"1",midcycle:false,cc:4,ev:6,
       relay:[{label:"Legal interpretation",weeks:4,par:false},{label:"Compliance policy",weeks:4,par:false},{label:"Security program design",weeks:3,par:false},{label:"Finding the right partner teams",weeks:2,par:false},{label:"Product team intake",weeks:2,par:false}],
       deps:[{label:"Waiting on the build platform team",weeks:3}],
       caps:[{label:"Competing regulatory work",pct:10}],
       blocks:[{label:"Year-end code freeze",from:"2026-12-15",to:"2027-01-05",repeat:true},{label:"Major release crunch",from:"2027-05-01",to:"2027-05-21",repeat:false}]};
   }
-  const PROFILES={
-    large:{note:"many handoffs across specialist teams and quarterly planning",capBase:80,cadence:"3",cycleStart:"1",midcycle:false,cc:4,ev:6,
-      relay:[{label:"Legal interpretation",weeks:4,par:false},{label:"Compliance policy",weeks:4,par:false},{label:"Security program design",weeks:3,par:false},{label:"Finding the right partner teams",weeks:2,par:false},{label:"Product team intake",weeks:2,par:false}],
-      deps:[{label:"Waiting on the build platform team",weeks:3}],caps:[{label:"Competing regulatory work",pct:10}],
-      blocks:[{label:"Year-end code freeze",from:"2026-12-15",to:"2027-01-05",repeat:true},{label:"Major release crunch",from:"2027-05-01",to:"2027-05-21",repeat:false}]},
-    medium:{note:"fewer handoffs, quarterly planning and a team shared with roadmap work",capBase:70,cadence:"3",cycleStart:"1",midcycle:false,cc:4,ev:6,
-      relay:[{label:"Legal and compliance interpretation",weeks:4,par:false},{label:"Security program design",weeks:3,par:false},{label:"Product team intake",weeks:2,par:false}],
-      deps:[{label:"Waiting on a platform or vendor team",weeks:3}],caps:[{label:"Competing regulatory work",pct:10}],
-      blocks:[{label:"Year-end code freeze",from:"2026-12-15",to:"2027-01-05",repeat:true},{label:"Major release crunch",from:"2027-05-01",to:"2027-05-21",repeat:false}]},
-    small:{note:"a short relay with outside help and flexible planning, but a small team that also runs support and the product",capBase:50,cadence:"3",cycleStart:"1",midcycle:true,cc:2,ev:5,
-      relay:[{label:"Interpretation with an outside advisor",weeks:4,par:false},{label:"Product lead turns it into work",weeks:2,par:false}],
-      deps:[{label:"Waiting on an upstream or vendor fix",weeks:3}],caps:[{label:"Customer support and urgent fixes",pct:10}],
-      blocks:[{label:"Year-end break",from:"2026-12-20",to:"2027-01-03",repeat:true}]},
-    micro:{note:"a founder-led relay and no planning cycle, but only a few people who do everything",capBase:30,cadence:"3",cycleStart:"1",midcycle:true,cc:2,ev:6,
-      relay:[{label:"Founder reads and interprets",weeks:3,par:false},{label:"Outside advisor review",weeks:3,par:false}],
-      deps:[{label:"Waiting on an upstream or vendor fix",weeks:3}],caps:[],
-      blocks:[{label:"Year-end break",from:"2026-12-20",to:"2027-01-03",repeat:true}]}
-  };
   const SIZE_NAME={micro:"micro",small:"small",medium:"medium-sized",large:"large"};
   function clean(o){
     const d=sample();if(!o||typeof o!=="object")return null;
@@ -503,10 +484,6 @@ footer{font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:90ch}
   });
   $("reset").addEventListener("click",()=>{S=sample();writeSimple();renderLists();compute();});
   $("useToday").addEventListener("click",()=>{read();S.today=todayISO();writeSimple();compute();});
-  $("applySize").addEventListener("click",()=>{read();const sz=S.size,p=PROFILES[sz],h=$("sizeHint");
-    if(!p){h.textContent="Choose a company size first.";return;}
-    const {note,...vals}=p;S={...S,...JSON.parse(JSON.stringify(vals))};writeSimple();renderLists();compute();
-    h.textContent=`Filled illustrative starting values for a ${SIZE_NAME[sz]} company: ${note}. These are assumptions, not data. Replace them with your own.`;});
   $("share").addEventListener("click",()=>{read();const url=location.href.split("#")[0]+"#s="+encode(S),toast=$("toast");
     try{history.replaceState(null,"",url);}catch(e){}
     const done=()=>{toast.textContent="Copied a link to this scenario.";setTimeout(()=>toast.textContent="",2500);};

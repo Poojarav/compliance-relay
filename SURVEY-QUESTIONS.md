@@ -53,7 +53,7 @@ Each question maps to one constraint in the Compliance Relay, so answers can be 
 
 ## Notes for survey designers
 
-- Questions 0, 1, 7 and 9 give the most insight if space is limited. Size (question 0) matters most for interpretation: small organizations tend to be limited by capacity, large ones by handoffs and planning.
+- Questions 0, 1, 7 and 9 give the most insight if space is limited. Size (question 0) helps test whether smaller organizations are limited more by capacity, and larger ones by handoffs and planning.
 - Ranges, not exact figures, keep responses anonymous and easier to answer.
 - The same questions work for any regulation with a fixed deadline: replace "CRA" and the date.
 

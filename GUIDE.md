@@ -98,14 +98,14 @@ Rough numbers are fine. Run the calculator twice, with an optimistic and a pessi
 | **Blocked periods** | Your freeze calendar, release calendar, audit calendar and any holiday shutdowns. Mark annual ones as repeating. |
 | **Release and evidence** | Code-complete lead time from your release calendar. Evidence time from how long your last audit or certification took to prepare. |
 
-## Company size: the bottleneck moves
+## Company size: where the bottleneck may move
 
-Every company faces the same deadline, but size changes **where** the time goes.
+Every company faces the same deadline, but size may change **where** the time goes. A pattern worth testing:
 
-- **Large companies** lose most time in the relay: many specialist teams, sequential handoffs and fixed planning cycles.
-- **Small and micro companies** have short relays and flexible planning, often with an outside advisor for interpretation. Their constraint is **capacity**: a few people who also build the product, support customers and fix urgent issues, with little budget to add more.
+- **Larger companies** may lose more time in the relay: more specialist teams, more sequential handoffs and fixed planning cycles.
+- **Smaller companies** may have shorter relays and more flexible planning, but less **capacity**: a few people who also build the product and support customers, with little budget to add more.
 
-The web calculator can fill illustrative starting values for each size, from Micro (under 10 people) to Large (250 or more), using the EU definitions of micro, small and medium-sized enterprises. These are **assumptions, not data**, chosen to show the pattern: in the sample, the biggest loss moves from handoffs at a large company to reduced capacity at small and micro ones. Replace them with your own numbers.
+Treat this as a pattern to test with your own numbers, not a finding: there is no public data yet on CRA timelines by company size. The calculator's size setting shows what the CRA treats differently for each size; the timing inputs are always your own.
 
 What the CRA itself treats differently by size:
 
