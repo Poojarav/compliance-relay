@@ -32,6 +32,9 @@ Prompted by feedback at the OpenSSF Global Cyber Policy Working Group (9 Novembe
 - Licenses: Apache 2.0 for code, CC BY 4.0 for documentation
 - Issue templates for feedback and anonymized timeline data
 
-## Planned for 0.5
+## Planned next
 
+- A conformity assessment step, for products that need a notified body, with the route and time as your inputs
+- A checklist of CRA work areas to help estimate the engineering work
+- Comparing two scenarios side by side
 - Calculator inputs for an earlier checkpoint, capacity changes during the window, and upstream release cadence

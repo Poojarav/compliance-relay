@@ -14,7 +14,7 @@ Regulations like the EU Cyber Resilience Act give organizations years. But a req
 - **Guide:** [`GUIDE.md`](GUIDE.md) explains the framework, the calculation, a worked example, where to get your numbers and how to win time back.
 - **Survey questions:** [`SURVEY-QUESTIONS.md`](SURVEY-QUESTIONS.md) is a short, reusable question set for readiness surveys that want to measure *why* organizations expect to be late, not only *whether*.
 
-New in 0.5: choose a **company size** to see where the bottleneck moves and what the CRA treats differently for that size, and add optional turnover and EU revenue to see the **maximum fine and sales at risk** if the work is late.
+New in 0.5: choose a **company size** to see what the CRA treats differently for that size, and add optional turnover and EU revenue to see the **maximum fine and sales at risk** if the work is late.
 
 The web calculator opens with the worked example below. Press **Start the clock today** and enter your own numbers, then **Copy a link to this scenario** to share it with your team.
 

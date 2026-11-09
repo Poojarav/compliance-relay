@@ -141,7 +141,7 @@ Start with your biggest loss.
 
 ## Three things the model now asks you to check
 
-These came from practitioners and are not yet built into the calculator. Account for them by hand until v0.5.
+These came from practitioners and are not yet built into the calculator. Account for them by hand for now; they are planned for a future version.
 
 - **The earliest checkpoint, not the legal date.** If an internal audit, readiness review or certification step needs complete evidence before the regulatory deadline, enter that date as your deadline. In the worked example, an internal audit on 1 October 2027 cuts the work possible from 16.3 to 9.2 weeks.
 - **Capacity that changes partway through.** Reorganizations, workforce reductions, incident response and on-call duty change the share of time available. Split the window at the change and run the calculator for each part.
