@@ -155,7 +155,7 @@ The Compliance Relay is not specific to one regulation. Enter any deadline: late
 
 - This is a planning model, not a prediction. Its answers are only as good as the numbers you enter.
 - Weeks are calendar weeks. Time off and other duties are handled through capacity, and full stops through blocked periods.
-- The company-size starting values are illustrative assumptions, not measurements. The delay and sales-at-risk figures are simple estimates that ignore blocked periods after the deadline.
+- The delay and sales-at-risk figures are simple estimates that ignore blocked periods after the deadline.
 - Handoff durations vary widely, and little public data exists on them yet.
 - The spreadsheet counts overlapping blocked periods twice, and its latest-start date is an approximation. The web calculator counts day by day.
 - It is not legal advice and does not interpret the CRA.
