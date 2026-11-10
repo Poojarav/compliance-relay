@@ -61,9 +61,9 @@ Suggested by Dishanth Chinnappa ([issue #1](https://github.com/Poojarav/complian
 
 12. **What carried over.** If so, what carried over to the CRA work most? *(Select up to two)*
     *Requirements mapping · Secure development processes · Evidence and technical documentation · People who have done it before · Little or nothing · Don't know*
-    → Handoffs
+    → Handoffs, Waiting on guidance
 
-13. **Same team.** Is the team doing the CRA work the same team that handled the earlier regime?
+13. **Same team.** If so, is the team doing the CRA work the same team that handled the regime that carried over most?
     *Yes · Partly · No · Don't know*
     → Handoffs
 
