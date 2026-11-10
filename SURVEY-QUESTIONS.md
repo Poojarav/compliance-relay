@@ -51,9 +51,26 @@ Each question maps to one constraint in the Compliance Relay, so answers can be 
 10. **Planning the timeline.** Has your organization estimated how much engineering time remains before the CRA deadline, after these constraints?
     *Yes, formally · Yes, informally · No, but it would be useful · No, and it would not be useful · Don't know*
 
+## Optional questions on prior regimes
+
+Suggested by Dishanth Chinnappa ([issue #1](https://github.com/Poojarav/compliance-relay/issues/1)). Organizations that have already met an earlier product cybersecurity regime may start the CRA with part of the interpretation and handoff work done. These questions test whether that explains some of the difference between organizations.
+
+11. **Prior regimes.** Before starting CRA work, had your organization (or the product line you're answering for) already met the requirements of any of these? *(Select all that apply)*
+    *RED Delegated Act / EN 18031 · IEC 62443-4-1 · IEC 62443-4-2 · ETSI EN 303 645 · FDA premarket cybersecurity · Common Criteria or FIPS 140-3 · NIST SSDF attestation · Other · None · Don't know*
+    → Handoffs, Waiting on guidance
+
+12. **What carried over.** If so, what carried over to the CRA work most? *(Select up to two)*
+    *Requirements mapping · Secure development processes · Evidence and technical documentation · People who have done it before · Little or nothing · Don't know*
+    → Handoffs
+
+13. **Same team.** Is the team doing the CRA work the same team that handled the earlier regime?
+    *Yes · Partly · No · Don't know*
+    → Handoffs
+
 ## Notes for survey designers
 
 - Questions 0, 1, 7 and 9 give the most insight if space is limited. Size (question 0) helps test whether smaller organizations are limited more by capacity, and larger ones by handoffs and planning.
+- Questions 11 to 13 can be compared with question 1 (time to engineering) and question 4 (waiting on standards) to test whether prior regimes shorten handoffs and the wait for guidance. They are not expected to help much with CRA-only obligations such as vulnerability reporting, the support period or SBOMs.
 - Ranges, not exact figures, keep responses anonymous and easier to answer.
 - The same questions work for any regulation with a fixed deadline: replace "CRA" and the date.
 

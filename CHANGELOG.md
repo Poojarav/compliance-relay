@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Survey questions: new optional questions 11–13 on prior regimes (RED Delegated Act / EN 18031, IEC 62443-4-1 and others), what carried over, and whether the same team is doing the CRA work. Suggested by Dishanth Chinnappa in [#1](https://github.com/Poojarav/compliance-relay/issues/1).
+
 ## 0.5.0
 
 Prompted by feedback at the OpenSSF Global Cyber Policy Working Group (9 November 2026).
